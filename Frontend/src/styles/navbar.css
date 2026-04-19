@@ -1,0 +1,43 @@
+.contenedorNav{
+    background-color: var(--navbar);
+    padding: 1rem;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 120rem;
+    margin: 0 auto;
+    font-size: 2rem;
+}
+
+.navSecciones {
+    display: flex;
+    gap: 2rem;
+}
+
+.navbar a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: .7rem 1rem;
+    border-radius: 1.4rem;
+    color: #ffffff;
+    text-transform: uppercase;
+    font-weight: bold;
+    gap: .5rem;
+}
+
+.navbar a i {
+    color: #000000;
+    margin-left: .5rem;
+}
+
+.navbar a:hover {
+    background-color: #ffffff;
+    color: #000000;
+    transition: 1s all;
+}
+
+
