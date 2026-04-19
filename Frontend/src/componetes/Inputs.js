@@ -1,39 +1,37 @@
 import styled from "@emotion/styled";
 import { TextField } from "@mui/material";
 
-export const InputBlanco = styled(TextField)({
-    '& .MuiInputBase-input':{
+export const InputBlanco = styled(TextField)(({ theme }) => ({
+    '& .MuiInputBase-input': {
         backgroundColor: '#fff',
         borderRadius: '1.5rem'
     },
     '& label.Mui-focused': {
-      color: '#FFF',
+      color: theme.palette.primary.main,
       fontWeight: 'bold',
       borderRadius: '1.5rem',
       paddingLeft: '.5rem',
       paddingRight: '.5rem',
       width: '100%'
     },
-    '& label.css-1weh54j-MuiFormLabel-root-MuiInputLabel-root':{
-        color: "#DE2E03",
+    '& label.MuiFormLabel-root': {
+        color: theme.palette.text.secondary,
         fontWeight: 'bold',
-        fontSize: '2rem'
+        fontSize: '1.6rem'
     },
     '& .MuiInput-underline:after': {
-      borderBottomColor: '#B2BAC2',
-      
+      borderBottomColor: theme.palette.primary.light,
     },
     '& .MuiOutlinedInput-root': {
       '& fieldset': {
         borderColor: '#E0E3E7',
         borderRadius: '1.5rem',
-    },
-    '&:hover fieldset': {
-        borderColor: '#000',
-    },
-    '&.Mui-focused fieldset': {
-        borderColor: '#6F7E8C',
-        color: '#FFF'
+      },
+      '&:hover fieldset': {
+        borderColor: theme.palette.primary.main,
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: theme.palette.primary.main,
       },
     },
-  });
+  }));

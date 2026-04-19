@@ -1,84 +1,77 @@
 import styled from "@emotion/styled";
 import { Button } from "@mui/material";
 
-export const ButonAzul = styled(Button)({
+export const ButonAzul = styled(Button)(({ theme }) => ({
   height: '5rem',
   boxShadow: 'none',
   textTransform: 'none',
   fontSize: 16,
   padding: '.6rem 2rem',
   border: '1px solid',
-  backgroundColor: '#3B57BC',
-  borderColor: '#0063cc',
+  backgroundColor: theme.palette.primary.main,
+  borderColor: theme.palette.primary.main,
   fontWeight: 'bold',
   borderRadius: '1.5rem',
-  color: '#FFF',
+  color: theme.palette.primary.contrastText,
   '&:hover': {
-    backgroundColor: '#0069d9',
-    borderColor: '#0062cc',
+    backgroundColor: theme.palette.primary.light,
+    borderColor: theme.palette.primary.light,
     boxShadow: 'none',
   },
   '&:active': {
     boxShadow: 'none',
-    backgroundColor: '#0062cc',
-    borderColor: '#005cbf',
+    backgroundColor: theme.palette.primary.main,
+    borderColor: theme.palette.primary.main,
   },
   '&:focus': {
-    boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
+    boxShadow: `0 0 0 0.2rem ${theme.palette.primary.main}33`,
   },
-});
+}));
 
-
-
-export const ButonAmarillo = styled(Button)({
+export const ButonAmarillo = styled(Button)(({ theme }) => ({
   height: '5rem',
   boxShadow: 'none',
   textTransform: 'none',
   fontSize: 18,
   padding: '.6rem 2rem',
   border: 'none',
-  backgroundColor: '#F3BA4A',
+  backgroundColor: theme.palette.secondary.main,
   fontWeight: 'bold',
   borderRadius: '1.5rem',
-  color: '#000',
+  color: theme.palette.secondary.contrastText,
   '&:hover': {
-    backgroundColor: '#dd9c30',
-    borderColor: '#0062cc',
+    backgroundColor: theme.palette.secondary.dark,
     boxShadow: 'none',
   },
   '&:active': {
     boxShadow: 'none',
-    backgroundColor: '#0062cc',
-    border: 'none'
+    backgroundColor: theme.palette.secondary.dark,
   },
   '&:focus': {
-    boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
+    boxShadow: `0 0 0 0.2rem ${theme.palette.secondary.main}33`,
   },
-});
+}));
 
-
-export const ButonVerde = styled(Button)({
+export const ButonVerde = styled(Button)(({ theme }) => ({
   height: '5rem',
   boxShadow: 'none',
   textTransform: 'none',
   fontSize: 18,
   padding: '.6rem 2rem',
   border: 'none',
-  backgroundColor: '#3BBC57',
+  backgroundColor: theme.palette.success.main,
   fontWeight: 'bold',
   borderRadius: '1.5rem',
-  color: '#000',
+  color: theme.palette.success.contrastText,
   '&:hover': {
-    backgroundColor: '#73d288',
-    borderColor: '#0062cc',
+    backgroundColor: theme.palette.success.light,
     boxShadow: 'none',
   },
   '&:active': {
     boxShadow: 'none',
-    backgroundColor: '#0062cc',
-    border: 'none'
+    backgroundColor: theme.palette.success.main,
   },
   '&:focus': {
-    boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
+    boxShadow: `0 0 0 0.2rem ${theme.palette.success.main}33`,
   },
-});
+}));
