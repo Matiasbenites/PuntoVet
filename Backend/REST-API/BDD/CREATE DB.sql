@@ -1,5 +1,5 @@
-CREATE DATABASE punto_vet;
-USE punto_vet;
+CREATE DATABASE puntovet;
+USE puntovet;
 
 CREATE TABLE
     tipo_usuario (

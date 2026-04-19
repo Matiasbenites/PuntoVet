@@ -1,4 +1,4 @@
-USE punto_vet;
+USE puntovet;
 
 DELIMITER //
 

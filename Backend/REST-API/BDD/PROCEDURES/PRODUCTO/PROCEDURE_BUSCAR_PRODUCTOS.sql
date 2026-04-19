@@ -1,4 +1,4 @@
-USE punto_vet;
+USE puntovet;
 DELIMITER //
 CREATE PROCEDURE BuscarProductos(IN param VARCHAR(255), IN limite INT, IN offset INT, IN v_estado BINARY)
 BEGIN
