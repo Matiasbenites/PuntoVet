@@ -77,7 +77,7 @@ export const LoginPage = () => {
                                 </Grid>
                             </Grid>
                             <Grid item sm={6} padding={1}>
-                                <CardMedia component='img' alt="Vet Safe" image="../../../img/logo.jpeg" />
+                                <CardMedia component='img' alt="Vet Safe" image="../../../img/PuntoVet-logo.png" />
                             </Grid>
                         </Grid>
                     </form>
