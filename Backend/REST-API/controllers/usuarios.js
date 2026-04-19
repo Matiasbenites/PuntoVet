@@ -110,7 +110,13 @@ const login = async (req, res) => {
         const usuarioBusqueda = await Usuario.findUser({ usuario })
         console.log('Usuario encontrado', usuarioBusqueda);
         if (usuarioBusqueda) {
-            const passwordMatch = await bcryptjs.compare(password, usuarioBusqueda.password);
+            // const passwordMatch = await bcryptjs.compare(password, usuarioBusqueda.password);
+            const user = usuarioBusqueda.dataValues;
+            const passwordMatch = password === user.password;
+            console.log("PASSWORD INPUT:", password);
+            console.log("PASSWORD DB:", usuarioBusqueda.dataValues.password);
+            console.log("TIPO INPUT:", typeof password);
+            console.log("TIPO DB:", typeof usuarioBusqueda.dataValues.password);
             if (passwordMatch) {
                 res.status(200)
                     .json({
