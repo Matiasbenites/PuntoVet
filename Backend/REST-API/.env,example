@@ -1,0 +1,8 @@
+
+
+PORT = 'Tu puerto rey'
+HOST = 'host'
+DATABASE = 'tu base de dato'
+USER = 'tu usuario'
+PASSWORD = 'tu password '
+URL_PUBLICA = 'tu url publica'

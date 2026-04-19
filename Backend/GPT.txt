@@ -1,0 +1,13 @@
+quiero que me elimines todo lo que esta despues del primero punto y coma y lo formatees como para un query de base de datos, la lumna se llamara nombre.Ten en cuenta que, el nombre es hasta el primer ; luego quiero que elimines todo lo demas
+
+
+
+
+ahora quiero que, agreges columnas, una se llamara categoria, y tendra como valor 1 en todas las filas; luego otra que diga peso, y el peso sera solo numero y sera el mismo del pesaje de cada producto que me mandaste recien, es decir, por ejemplo el producto, VAGONETA GATO x20kg el peso sera 20. 
+
+
+perfecto, entocnes crea una columna que diga descripcion y  pon: "Alimento balanceado para" y aqui va para que mascota es el alimneto dependiendo del nombre,  y luego agrega el texto PET FRIEND / PuntoVet
+
+
+esta perfecto, eres muy bueno. Ahora quiero una columna que diga Stock, sera de numeros enteros que varian entre 2 y 30; tambien otras 3 columnas que diga, precioContado, precioLista y precioSuelto, el precio es valor numerico entero, varian entre 15000 y 90000 el precioContado, el precioLista es el 40% mas que el precioContado y el precioSuelto es la divicion del precioLista dividio el peso de cada producto
+
