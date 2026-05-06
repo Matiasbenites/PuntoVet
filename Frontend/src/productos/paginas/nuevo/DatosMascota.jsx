@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { validacion } from "../../../componentes/validaciones";
 import { Producto } from "../../../modelos/Producto";
+import { getMascotas, getEdades } from "../../../api/catalogos/catalogosApi";
 
 
 export const DatosMascota = ({ nuevoProducto, setNuevoProducto, progreso, setProgreso }) => {
@@ -13,28 +14,36 @@ export const DatosMascota = ({ nuevoProducto, setNuevoProducto, progreso, setPro
     const navigate = useNavigate();
     const [codMascotas, setcodMascotas] = useState(nuevoProducto.codMascotas ? nuevoProducto.codMascotas.map(String) : []);
     const [codEdades, setcodEdades] = useState(nuevoProducto.codEdades ? nuevoProducto.codEdades.map(String) : []);
+    const [mascotas, setMascotas] = useState([]);
+    const [edades, setEdades] = useState([]);
     const { handleSubmit, register, formState: { errors } } = useForm({ defaultValues: nuevoProducto });
 
 
     useEffect(() => {
         if (progreso < 1) {
-            console.log(progreso);
             navigate('/productos');
         }
+
+        const cargarOpciones = async () => {
+            const mascotasData = await getMascotas();
+            const edadesData = await getEdades();
+            setMascotas(mascotasData);
+            setEdades(edadesData);
+        };
+
+        cargarOpciones();
     }, [progreso, navigate]);
 
     const onSubmit = ({ imagen }) => {
         if (codMascotas.length === 0 || codEdades.length === 0) {
-            alert('Por favor seleccione una codMascotas y el rango de codEdades')
+            alert('Por favor seleccione mascotas y edades');
             return;
         }
 
-        const datosImagen = imagen[0]
-
+        const datosImagen = imagen[0];
         const productoActualizado = Producto.from(nuevoProducto);
         productoActualizado.setProducto({ codMascotas, codEdades, imagen: datosImagen });
         setNuevoProducto(productoActualizado.obtenerEntidad());
-        console.log(imagen);
         setProgreso(progreso + 1);
         navigate('../3');
     }
@@ -42,7 +51,7 @@ export const DatosMascota = ({ nuevoProducto, setNuevoProducto, progreso, setPro
     const handlecodEdades = (event) => {
         const value = event.target.value.toString();
         if (codEdades.includes(value)) {
-            setcodEdades(codEdades.filter((item) => item != value));
+            setcodEdades(codEdades.filter((item) => item !== value));
         } else {
             setcodEdades([...codEdades, value]);
         }
@@ -74,22 +83,38 @@ export const DatosMascota = ({ nuevoProducto, setNuevoProducto, progreso, setPro
                                 display: 'flex',
                                 flexDirection: 'row'
                             }} >
-                            <FormControlLabel control={<Checkbox checked={codMascotas.includes('1')} onChange={handlecodMascotas} value={'1'} />} label="Perro" />
-                            <FormControlLabel control={<Checkbox checked={codMascotas.includes('2')} onChange={handlecodMascotas} value={'2'} />} label="Gato" />
-                            <FormControlLabel control={<Checkbox checked={codMascotas.includes('3')} onChange={handlecodMascotas} value={'3'} />} label="Ave" />
-                            <FormControlLabel control={<Checkbox checked={codMascotas.includes('4')} onChange={handlecodMascotas} value={'4'} />} label="Otros" />
+                            {mascotas.map((mascota) => (
+                                <FormControlLabel
+                                    key={mascota.codMascota}
+                                    control={
+                                        <Checkbox
+                                            checked={codMascotas.includes(String(mascota.codMascota))}
+                                            onChange={handlecodMascotas}
+                                            value={String(mascota.codMascota)}
+                                        />
+                                    }
+                                    label={mascota.nombreMascota}
+                                />
+                            ))}
                         </FormGroup>
                     </Grid>
                     <Grid item>
                         <Typography variant="h7" gutterBottom>Edades </Typography>
                         <FormGroup
                             sx={{ display: 'flex', flexDirection: 'row' }}>
-                            <FormControlLabel control={<Checkbox checked={codEdades.includes('1')} onChange={handlecodEdades} value={'1'} />} label="Cachorro" />
-                            <FormControlLabel control={<Checkbox checked={codEdades.includes('2')} onChange={handlecodEdades} value={'2'} />} label="Castrado" />
-                            <FormControlLabel control={<Checkbox checked={codEdades.includes('3')} onChange={handlecodEdades} value={'3'} />} label="Joven" />
-                            <FormControlLabel control={<Checkbox checked={codEdades.includes('4')} onChange={handlecodEdades} value={'4'} />} label="Adulto" />
-                            <FormControlLabel control={<Checkbox checked={codEdades.includes('5')} onChange={handlecodEdades} value={'5'} />} label="Mayor" />
-                            <FormControlLabel control={<Checkbox checked={codEdades.includes('6')} onChange={handlecodEdades} value={'6'} />} label="Urinario" />
+                            {edades.map((edad) => (
+                                <FormControlLabel
+                                    key={edad.codEdad}
+                                    control={
+                                        <Checkbox
+                                            checked={codEdades.includes(String(edad.codEdad))}
+                                            onChange={handlecodEdades}
+                                            value={String(edad.codEdad)}
+                                        />
+                                    }
+                                    label={edad.nombreEdad}
+                                />
+                            ))}
                         </FormGroup>
                     </Grid>
                     <Grid item>

@@ -1,3 +1,5 @@
+import { setProducto as apiSetProducto, updateProducto as apiUpdateProducto } from "../api/productos/productosApi";
+
 export class Producto {
     constructor(datos = {}) {
         this.codProducto = datos.codProducto ?? '';
@@ -72,6 +74,21 @@ export class Producto {
             precioSuelto: this.precioSuelto,
             estado: this.estado
         };
+    }
+
+    async guardar() {
+        if (!this.codProducto) {
+            return await apiSetProducto(this.obtenerEntidad());
+        }
+        return await apiUpdateProducto(this.obtenerEntidad());
+    }
+
+    async crear() {
+        return await apiSetProducto(this.obtenerEntidad());
+    }
+
+    async actualizar() {
+        return await apiUpdateProducto(this.obtenerEntidad());
     }
 
     static from(datos = {}) {
