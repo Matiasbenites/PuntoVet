@@ -30,14 +30,14 @@ export const ItemProducto = ({ productos, verProducto, productoEstado, eliminarP
                 <p>Suelto</p>
                 <span> $ {precioSuelto} </span>
             </div>
-            <div> {/* tacho basurero */}
+            <div> {/* botón editar */}
                 <Link
                     to={'/productos/nuevo'} state={{ codProducto: codProducto }}
                 >
                     <Button><ModeEdit color="" /></Button>
                 </Link>
             </div>
-            <div> {/* lapiz */}
+            <div> {/* botón eliminar / restaurar */}
                 <Button onClick={handleEliminarProducto}><DeleteForever sx={{ color: productoEstado ? 'red' : 'green' }} /> </Button>
             </div>
 

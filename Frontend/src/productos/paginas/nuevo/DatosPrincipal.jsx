@@ -1,16 +1,22 @@
 import { Box, Button, Grid, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { validacion } from "../../../componetes/validaciones";
+import { validacion } from "../../../componentes/validaciones";
+import { Producto } from "../../../modelos/Producto";
 
 export const DatosPrincipal = ({ nuevoProducto, setNuevoProducto, progreso, setProgreso }) => {
+    // Primer paso del formulario para crear/editar un producto.
+    // Aquí se ingresa el nombre y descripción del producto.
+    // Al enviar, se guarda en el estado y se avanza al siguiente paso.
 
 
     const { handleSubmit, register, formState: { errors }, reset } = useForm({ defaultValues: nuevoProducto });
     const navigate = useNavigate();
 
     const onSubmit = ({ nombre, descripcion }) => {
-        setNuevoProducto({ ...nuevoProducto, nombre, descripcion });
+        const productoActualizado = Producto.from(nuevoProducto);
+        productoActualizado.setProducto({ nombre, descripcion });
+        setNuevoProducto(productoActualizado.obtenerEntidad());
         setProgreso(progreso + 1);
         navigate('1');
     }

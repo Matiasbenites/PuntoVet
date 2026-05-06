@@ -4,6 +4,9 @@ const { check } = require('express-validator');
 const validateResult = require('../utils/validator');
 
 const validatorSetProductos = [
+    // Validaciones del lado del servidor para asegurar que los datos del producto sean correctos.
+    // Valida que nombre, descripción y categoría sean obligatorios y cumplan con los requisitos.
+    // Los campos opcionales (mililitro, cantidad, etc.) se convierten a null si vienen vacíos.
     check('nombre').isLength({ min: 3, max: 100 }).notEmpty().exists(),
     check('descripcion').isLength({ min: 3, max: 300 }).notEmpty().exists(),
     check('codCategoria').isInt().notEmpty().exists(),

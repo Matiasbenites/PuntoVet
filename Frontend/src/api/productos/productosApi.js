@@ -7,7 +7,8 @@ export const productosApi = axios.create({
 });
 
 export const getProductos = async (page = 10, limite, productoEstado, busqueda = '') => {
-    // console.log('campo api: ', busqueda, 'Pagina: ', page, 'Limite: ', limite, 'Estado: ', productoEstado);
+    // Pide la lista de productos paginada al backend.
+    // Usa página, límite, estado y búsqueda para mostrar la lista en la UI.
     try {
         const { data } = await productosApi.get(`/productos?limite=${limite}&pagina=${page}&v_estado=${productoEstado}&busqueda=${busqueda}`);
         console.log(data);
@@ -19,6 +20,8 @@ export const getProductos = async (page = 10, limite, productoEstado, busqueda =
 };
 
 export const getProducto = async (codProducto = 1) => {
+    // Recupera un solo producto por su código.
+    // Esto se usa cuando se necesita editar un producto existente.
     try {
         const { data } = await productosApi.get(`/productos/${codProducto}`);
         return data;
@@ -27,7 +30,8 @@ export const getProducto = async (codProducto = 1) => {
     }
 }
 
-export const getProductosFilter = async () => {
+export const getProductosFilter = async (busqueda = '', productoEstado = false) => {
+    // Filtra productos por búsqueda y estado.
     try {
         const { data } = await productosApi.get(`/productos/filtro?busqueda=${busqueda}&v_estado=${productoEstado}`)
         return data;
@@ -36,46 +40,52 @@ export const getProductosFilter = async () => {
     }
 }
 
-const setImagen = async (dataImage) => {
+const subirImagen = async (imagen) => {
     const formData = new FormData();
-    formData.append('imagen', dataImage)
+    formData.append('imagen', imagen);
+
     try {
-        const responce = await productosApi.post('/storage', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-        return responce;
+        const responce = await productosApi.post('/storage', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        return responce.data;
     } catch (error) {
-        return { message: `Error al cargar la imagen: ${error}` }
+        throw new Error(`Error al cargar la imagen: ${error}`);
     }
-}
+};
 
 export const setProducto = async (nuevoProducto) => {
-    delete nuevoProducto.codProducto;
-    const datosImagen = nuevoProducto.imagen;
+    const productoPayload = { ...nuevoProducto };
+    delete productoPayload.codProducto;
+
     try {
-        const { data } = await setImagen(datosImagen);
-        console.log('enlace de imagen: ', data);
-        nuevoProducto.imagen = data;
-        const responce = await productosApi.post('/productos', nuevoProducto);
+        if (productoPayload.imagen instanceof File) {
+            productoPayload.imagen = await subirImagen(productoPayload.imagen);
+        }
+
+        const responce = await productosApi.post('/productos', productoPayload);
         return responce.data.message;
     } catch (error) {
-        return error
+        throw new Error(error.message || 'Error al crear el producto');
     }
 };
 
 export const updateProducto = async (nuevoProducto) => {
-    const datosImagen = nuevoProducto.imagen;
-    try {
-        const { data } = await setImagen(datosImagen);
-        console.log('enlace de imagen: ', data);
-        nuevoProducto.imagen = data;
+    const productoPayload = { ...nuevoProducto };
 
-        const responce = await productosApi.put(`/productos/${nuevoProducto.codProducto}`, nuevoProducto)
+    try {
+        if (productoPayload.imagen instanceof File) {
+            productoPayload.imagen = await subirImagen(productoPayload.imagen);
+        }
+
+        const responce = await productosApi.put(`/productos/${productoPayload.codProducto}`, productoPayload)
         return responce.data.message;
     } catch (error) {
-        return { message: `Error al actualizar el producto ${nuevoProducto.codProducto}`, error }
+        throw new Error(error.message || `Error al actualizar el producto ${productoPayload.codProducto}`);
     }
 }
 
 export const deleteProducto = async (codProducto) => {
+    // Pide al backend que cambie el estado del producto.
+    // El backend decide si marca el producto como eliminado o lo restaura.
     try {
         const responce = await productosApi.delete(`/productos/${codProducto}`)
         return responce.data

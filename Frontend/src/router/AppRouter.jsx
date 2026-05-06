@@ -4,7 +4,7 @@ import { ProductosRouter } from "./ProductosRouter";
 import { UsuariosRouter } from "./UsuariosRouter";
 import { LogoutPage } from "../auth/hook/LogoutPage";
 import { PrivateRoute } from "./PrivateRoute";
-import { Navbar } from "../componetes";
+import { Navbar } from "../componentes";
 import { PublicRoute } from "./PublicRoute";
 import { VentaRouter } from "./VentaRouter";
 import '../styles';

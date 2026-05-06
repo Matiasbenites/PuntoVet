@@ -2,21 +2,19 @@ import { Box, Button, Grid, MenuItem, Select, TextField } from "@mui/material"
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { validacion } from "../../../componetes/validaciones";
+import { validacion } from "../../../componentes/validaciones";
 import { setProducto, updateProducto } from "../../../api/productos/productosApi";
 
-
-export const DatosPrecio = ({ nuevoProducto, setNuevoProducto, progreso, setProgreso }) => {
+export const DatosPrecio = ({ nuevoProducto, setNuevoProducto, progreso }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
         if (progreso < 2) {
-            console.log(progreso);
             navigate('/productos');
         }
     }, [progreso, navigate]);
 
-    const [estado, setEstado] = useState(1);
+    const [estado, setEstado] = useState(nuevoProducto.estado ?? 1);
     const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: nuevoProducto });
 
     const handleEstado = (event) => {
@@ -24,25 +22,26 @@ export const DatosPrecio = ({ nuevoProducto, setNuevoProducto, progreso, setProg
     }
 
     const onSubmit = async ({ stock, precioCompra, precioVenta, precioSuelto }) => {
-        const productoActualizado = { ...nuevoProducto, stock, precioCompra, precioVenta, precioSuelto, estado }
+        const productoActualizado = {
+            ...nuevoProducto,
+            stock,
+            precioCompra,
+            precioVenta,
+            precioSuelto,
+            estado
+        };
 
-        setNuevoProducto(productoActualizado)
-        let mensaje = '';
+        setNuevoProducto(productoActualizado);
+
         try {
-            if (productoActualizado.codProducto === '') {
-                mensaje = await Promise.race([
-                    setProducto(productoActualizado),
-                    new Promise((_, reject) => setTimeout(() => reject('Tiempo de espera excedido'), 10000))
-                ]);
-            } else {
-                mensaje = await Promise.race([
-                    updateProducto(productoActualizado),
-                    new Promise((_, reject) => setTimeout(() => reject('Tiempo de espera excedido'), 10000))
-                ]);
-            }
+            const mensaje = await Promise.race([
+                productoActualizado.codProducto ? updateProducto(productoActualizado) : setProducto(productoActualizado),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Tiempo de espera excedido')), 10000))
+            ]);
+
             navigate('../4', { state: { mensaje } })
         } catch (error) {
-            navigate('../4', { state: { mensaje: 'No se pudo cargar el producto:  ' + error.message } })
+            navigate('../4', { state: { mensaje: 'No se pudo cargar el producto: ' + error.message } })
         }
     }
 
@@ -73,22 +72,22 @@ export const DatosPrecio = ({ nuevoProducto, setNuevoProducto, progreso, setProg
                             <TextField
                                 label='Precio Compra'
                                 {...register('precioCompra', validacion.peso)}
-                                error={!!errors.peso}
-                                helperText={errors.peso?.message} />
+                                error={!!errors.precioCompra}
+                                helperText={errors.precioCompra?.message} />
                         </Grid>
                         <Grid item>
                             <TextField
                                 label='Precio Venta'
                                 {...register('precioVenta', validacion.peso)}
-                                error={!!errors.peso}
-                                helperText={errors.peso?.message} />
+                                error={!!errors.precioVenta}
+                                helperText={errors.precioVenta?.message} />
                         </Grid>
                         <Grid item>
                             <TextField
                                 label='Precio Suelto'
                                 {...register('precioSuelto', validacion.peso)}
-                                error={!!errors.peso}
-                                helperText={errors.peso?.message} />
+                                error={!!errors.precioSuelto}
+                                helperText={errors.precioSuelto?.message} />
                         </Grid>
                     </Grid>
                 </Grid>

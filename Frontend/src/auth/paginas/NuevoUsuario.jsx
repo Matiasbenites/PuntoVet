@@ -1,7 +1,7 @@
 import { Container, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
 import { set, useForm } from "react-hook-form";
 import { validacionesUsuario } from "../../validaciones";
-import { ButonVerde, TituloFormularioPrincipales } from "../../componetes";
+import { ButonVerde, TituloFormularioPrincipales } from "../../componentes";
 import { useEffect, useState } from "react";
 import { ContenedorFormulariosPrincipales } from "../../layout";
 import { getUsuario, setUsuario, updateUsuario } from "../../api/usuariosApi";

@@ -7,9 +7,13 @@ import { useTheme } from "@emotion/react";
 import { CardProducto } from "../componentes/CardProducto";
 import { getProducto } from "../../api/productos/productosApi";
 import { ContenedorFormulariosPrincipales } from "../../layout/ContenedorFormulariosPrincipales";
-import { TituloFormularioPrincipales } from "../../componetes";
+import { TituloFormularioPrincipales } from "../../componentes";
 
 export const NuevoProducto = ({ producto }) => {
+    // Contenedor principal del formulario multi-paso para crear o editar productos.
+    // Maneja los 4 pasos: datos principales, categoría, mascotas, y precios.
+    // Si se abre para editar, carga los datos del producto existente.
+    // Muestra una preview del producto mientras se llena el formulario.
     const [nuevoProducto, setNuevoProducto] = useState({
         codProducto: '',
         nombre: '',
@@ -52,7 +56,7 @@ export const NuevoProducto = ({ producto }) => {
         if (producto) {
             setNuevoProducto(producto)
         }
-    }, [nuevoProducto])
+    }, [producto])
 
 
     if (loading) {

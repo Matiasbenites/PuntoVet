@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { ItemProductoMinimisado } from "../../componetes/varios/ItemProductoMinimisado";
+import { ItemProductoMinimisado } from "../../componentes/varios/ItemProductoMinimisado";
 
 
 export const BuscadorProductosDesplegable = ({ productos, buscarProducto }) => {

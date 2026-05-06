@@ -2,11 +2,14 @@ import { Box, Button, Checkbox, FormControlLabel, FormGroup, FormHelperText, Gri
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { validacion } from "../../../componetes/validaciones";
-
+import { validacion } from "../../../componentes/validaciones";
+import { Producto } from "../../../modelos/Producto";
 
 
 export const DatosMascota = ({ nuevoProducto, setNuevoProducto, progreso, setProgreso }) => {
+    // Tercer paso: selección de mascotas y edades.
+    // Se muestran checkboxes para que el administrador elija a qué mascotas y edades aplica este producto.
+    // Los códigos seleccionados se guardan en arrays para asociarlos al producto.
     const navigate = useNavigate();
     const [codMascotas, setcodMascotas] = useState(nuevoProducto.codMascotas ? nuevoProducto.codMascotas.map(String) : []);
     const [codEdades, setcodEdades] = useState(nuevoProducto.codEdades ? nuevoProducto.codEdades.map(String) : []);
@@ -28,7 +31,9 @@ export const DatosMascota = ({ nuevoProducto, setNuevoProducto, progreso, setPro
 
         const datosImagen = imagen[0]
 
-        setNuevoProducto({ ...nuevoProducto, codMascotas, codEdades, imagen: datosImagen })
+        const productoActualizado = Producto.from(nuevoProducto);
+        productoActualizado.setProducto({ codMascotas, codEdades, imagen: datosImagen });
+        setNuevoProducto(productoActualizado.obtenerEntidad());
         console.log(imagen);
         setProgreso(progreso + 1);
         navigate('../3');

@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom"
 import { ListUsuarios } from "../auth/paginas/ListUsuarios"
-import { Navbar } from "../componetes"
+import { Navbar } from "../componentes"
 import { NuevoUsuario } from "../auth/paginas"
 
 

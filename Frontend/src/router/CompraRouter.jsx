@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom"
 import { CompraPage } from "../compras/pages/CompraPage"
 import { DetalleVentaPage } from "../ventas/paginas/DetalleVentaPage"
-import { ListaTransacciones } from "../componetes/paginas/ListaTransacciones"
+import { ListaTransacciones } from "../componentes/paginas/ListaTransacciones"
 
 
 

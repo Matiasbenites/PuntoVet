@@ -1,7 +1,7 @@
 import { useTheme } from "@emotion/react";
 import { CardMedia, Checkbox, Container, FormControlLabel, Grid, Typography } from "@mui/material";
 import { ContenedorLayout } from "../../layout/ContenedorLayout";
-import { ButonAzul, InputBlanco } from "../../componetes";
+import { ButonAzul, InputBlanco } from "../../componentes";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../api/usuariosApi";

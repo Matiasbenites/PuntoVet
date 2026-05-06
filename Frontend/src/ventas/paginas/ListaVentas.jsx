@@ -1,10 +1,10 @@
 import { Box, Container, Grid, Typography } from "@mui/material"
-import { SectionHeader } from "../../componetes/SectionHeader";
+import { SectionHeader } from "../../componentes/SectionHeader";
 import { useEffect, useState } from "react";
 import { getVentas } from "../../api/ventaApi";
 import { ItemListaVentas } from "../componentes/ItemListaVenta";
-import { FiltroCalendario } from "../../componetes/varios/FiltroCalendario";
-import { BuscadorGeneral } from "../../componetes/BuscadorPersonalizado";
+import { FiltroCalendario } from "../../componentes/varios/FiltroCalendario";
+import { BuscadorGeneral } from "../../componentes/BuscadorPersonalizado";
 
 
 export const ListaVenta = () => {

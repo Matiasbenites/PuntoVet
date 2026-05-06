@@ -1,7 +1,7 @@
 import { Box, Grid } from "@mui/material";
 import { ItemVenta } from "./ItemVenta";
-import { CardPago } from "../../componetes/varios/CardPago";
-import { ButonVerde } from "../../componetes";
+import { CardPago } from "../../componentes/varios/CardPago";
+import { ButonVerde } from "../../componentes";
 
 
 export const ComponenteCarrito = ({ carrito, montoTotal, montoFinal, montoRecargo, finalizarCompra, opcionPago, onQuitarProductoCarrito }) => {

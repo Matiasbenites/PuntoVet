@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom"
 import { useCarrito, useProductos, useSeleccionarOpcionPago } from "../../ventas/hooks";
 import { useState } from "react";
-import { LoadingPage } from "../../componetes/animaciones/LoadingPage";
-import { BuscadorProductos, ButonVerde, SectionHeader } from "../../componetes";
+import { LoadingPage } from "../../componentes/animaciones/LoadingPage";
+import { BuscadorProductos, ButonVerde, SectionHeader } from "../../componentes";
 import { BuscadorProductosDesplegable } from "../../ventas/componentes/BuscadorProductoDespegable";
 import { ComponenteCarrito } from "../../ventas/componentes/Carrito";
 import { ModalInputCompra } from "../componentes/ModalInputCompra";

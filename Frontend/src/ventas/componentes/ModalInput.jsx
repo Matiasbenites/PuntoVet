@@ -1,6 +1,6 @@
 import { Box, Grid, Modal, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { ButonVerde, CustomSelect } from "../../componetes";
+import { ButonVerde, CustomSelect } from "../../componentes";
 
 const style = {
     position: 'absolute',

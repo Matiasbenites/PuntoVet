@@ -1,11 +1,11 @@
 import { Box, CircularProgress, Container, Typography } from "@mui/material";
-import { BuscadorProductos, ButonAmarillo, ButonVerde, SectionHeader } from "../../componetes";
+import { BuscadorProductos, ButonAmarillo, ButonVerde, SectionHeader } from "../../componentes";
 import { useEffect, useRef, useState } from "react";
 import { ItemProducto } from "../componentes/ItemProducto";
 import { Link, useLocation } from "react-router-dom";
 import { ProductoModal } from "../componentes/ProductoModal";
 import { deleteProducto, getProductos } from "../../api/productos/productosApi";
-import useSnackbarSimple from "../../componetes/varios/Snackbar";
+import useSnackbarSimple from "../../componentes/varios/Snackbar";
 
 export const ListaPage = () => {
     const limite = 15;
@@ -28,6 +28,8 @@ export const ListaPage = () => {
     }
 
     const productosEliminados = () => {
+        // Alterna entre productos activos y eliminados.
+        // Al cambiar el estado, limpia la lista y reinicia la paginación.
         const nuevoEstado = !productoEstado;
         setProductoEstado(nuevoEstado);
         setProductos([]);
@@ -82,6 +84,8 @@ export const ListaPage = () => {
     }
 
     const eliminarProducto = async (codProducto) => {
+        // Aquí se ejecuta el flujo de eliminar producto desde la UI.
+        // Llama a la API para cambiar el estado y luego actualiza la lista local.
         try {
             const { message } = await deleteProducto(codProducto);
             console.log(message);

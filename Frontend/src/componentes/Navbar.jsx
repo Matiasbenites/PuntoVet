@@ -15,7 +15,7 @@ export const Navbar = () => {
             <nav className='navbar'>
                 <Link
                     className='navItem'
-                    to='/ventas'
+                    to='/productos'
                 >
                     PuntoVet <Home />
                 </Link>

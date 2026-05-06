@@ -1,10 +1,10 @@
 import { Box, Container } from "@mui/material";
-import { ButonAmarillo, ButonVerde, SectionHeader } from "../../componetes";
+import { ButonAmarillo, ButonVerde, SectionHeader } from "../../componentes";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { deleteUsuario, getUsuarios } from "../../api/usuariosApi";
 import { ItemUsuario } from "../componentes";
-import useSnackbarSimple from "../../componetes/varios/Snackbar";
+import useSnackbarSimple from "../../componentes/varios/Snackbar";
 
 export const ListUsuarios = () => {
     const [estadoUsuario, setEstadoUsuario] = useState(true);

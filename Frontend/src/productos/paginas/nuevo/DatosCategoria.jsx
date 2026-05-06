@@ -2,10 +2,14 @@ import { Box, Button, FormControl, FormHelperText, Grid, InputLabel, MenuItem, T
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { validacion } from "../../../componetes/validaciones";
+import { validacion } from "../../../componentes/validaciones";
+import { Producto } from "../../../modelos/Producto";
 
 
 export const DatosCategoria = ({ nuevoProducto, setNuevoProducto, progreso, setProgreso }) => {
+    // Segundo paso del formulario para seleccionar categoría, peso, medidas y tamaño.
+    // Se valida que la categoría esté seleccionada y los campos numéricos sean válidos.
+    // Al finalizar, se guarda la información y se avanza al siguiente paso.
 
     const navigate = useNavigate();
 
@@ -32,7 +36,9 @@ export const DatosCategoria = ({ nuevoProducto, setNuevoProducto, progreso, setP
     }
 
     const onSubmit = ({ codCategoria, peso, mililitro, cantidad, codTamanio }) => {
-        setNuevoProducto({ ...nuevoProducto, codCategoria, peso, mililitro, cantidad, codTamanio })
+        const productoActualizado = Producto.from(nuevoProducto);
+        productoActualizado.setProducto({ codCategoria, peso, mililitro, cantidad, codTamanio });
+        setNuevoProducto(productoActualizado.obtenerEntidad());
         setProgreso(progreso + 1);
         navigate('../2')
     }
