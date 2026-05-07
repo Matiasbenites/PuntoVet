@@ -1,7 +1,3 @@
-
-
-
-
 const { matchedData } = require('express-validator');
 const { producto, categoria, tamanio } = require('../models/index');
 const manejadorErrores = require('../utils/manejadorErrores');
@@ -32,28 +28,6 @@ const getProductos = async (req, res) => {
         manejadorErrores(res, `Ocurrio un error aca: ${e}`);
     }
 };
-
-// const getProductosFilter = async (req, res) => {
-//     try {
-//         const { v_estado, busqueda } = req.query;
-//         const estado = v_estado === 'true' ? true : false;
-//         console.log('Estado: ', estado, 'Busqueda: ', busqueda);
-
-//         const codicionesFiltrado = {
-//             estado,
-//             [Op.or]: [
-//                 { nombre: { [Op.like]: `%${busqueda}` } },
-//                 { codProducto: { [Op.like]: `%${busqueda}` } }
-//             ]
-//         };
-
-//         const productos = await Producto.findAllData({ where: codicionesFiltrado });
-//         res.json(productos)
-
-//     } catch (error) {
-//         manejadorErrores(res, `Ocurrio un error aca: ${error}`);
-//     }
-// }
 
 const getProducto = async (req, res) => {
     try {
