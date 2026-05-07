@@ -3,11 +3,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { validacion } from "../../../componentes/validaciones";
-import { Producto } from "../../../modelos/Producto";
-import { getMascotas, getEdades } from "../../../api/catalogos/catalogosApi";
 
-
-export const DatosMascota = ({ nuevoProducto, setNuevoProducto, progreso, setProgreso }) => {
+export const DatosMascota = ({ useCase, nuevoProducto, setNuevoProducto, progreso, setProgreso }) => {
     // Tercer paso: selección de mascotas y edades.
     // Se muestran checkboxes para que el administrador elija a qué mascotas y edades aplica este producto.
     // Los códigos seleccionados se guardan en arrays para asociarlos al producto.
@@ -16,8 +13,12 @@ export const DatosMascota = ({ nuevoProducto, setNuevoProducto, progreso, setPro
     const [codEdades, setcodEdades] = useState(nuevoProducto.codEdades ? nuevoProducto.codEdades.map(String) : []);
     const [mascotas, setMascotas] = useState([]);
     const [edades, setEdades] = useState([]);
-    const { handleSubmit, register, formState: { errors } } = useForm({ defaultValues: nuevoProducto });
+    const [errores, setErrores] = useState([]);
+    const { handleSubmit, register, formState: { errors }, reset } = useForm({ defaultValues: nuevoProducto });
 
+    useEffect(() => {
+        reset(nuevoProducto);
+    }, [nuevoProducto, reset]);
 
     useEffect(() => {
         if (progreso < 1) {
@@ -25,27 +26,30 @@ export const DatosMascota = ({ nuevoProducto, setNuevoProducto, progreso, setPro
         }
 
         const cargarOpciones = async () => {
-            const mascotasData = await getMascotas();
-            const edadesData = await getEdades();
+            const { mascotas: mascotasData, edades: edadesData } = await useCase.obtenerOpcionesFormularioProducto();
             setMascotas(mascotasData);
             setEdades(edadesData);
         };
 
         cargarOpciones();
-    }, [progreso, navigate]);
+    }, [progreso, navigate, useCase]);
 
-    const onSubmit = ({ imagen }) => {
+    const onSubmit = async ({ imagen }) => {
         if (codMascotas.length === 0 || codEdades.length === 0) {
-            alert('Por favor seleccione mascotas y edades');
+            setErrores(['Por favor seleccione mascotas y edades']);
             return;
         }
 
-        const datosImagen = imagen[0];
-        const productoActualizado = Producto.from(nuevoProducto);
-        productoActualizado.setProducto({ codMascotas, codEdades, imagen: datosImagen });
-        setNuevoProducto(productoActualizado.obtenerEntidad());
-        setProgreso(progreso + 1);
-        navigate('../3');
+        const datosImagen = imagen?.[0];
+
+        try {
+            await useCase.avanzarPaso({ codMascotas, codEdades, imagen: datosImagen });
+            setNuevoProducto(useCase.obtenerProducto());
+            setProgreso(useCase.getPasoActual());
+            navigate('../3');
+        } catch (error) {
+            setErrores([error.message]);
+        }
     }
 
     const handlecodEdades = (event) => {
@@ -138,7 +142,11 @@ export const DatosMascota = ({ nuevoProducto, setNuevoProducto, progreso, setPro
                         /> */}
                     </Grid>
                 </Grid>
-
+                {errores.length > 0 && (
+                    <FormHelperText error sx={{ marginTop: '1rem', display: 'block' }}>
+                        {errores.join(', ')}
+                    </FormHelperText>
+                )}
                 <Box component={'div'} sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
                     <Button onClick={() => navigate('../1')} variant="contained"> Atras </Button>
                     <Button type="submit" variant="contained"> Siguiente </Button>

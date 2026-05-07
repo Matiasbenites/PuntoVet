@@ -3,11 +3,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { validacion } from "../../../componentes/validaciones";
-import { Producto } from "../../../modelos/Producto";
-import { getCategoria, getTamanio } from "../../../api/catalogos/catalogosApi";
 
-
-export const DatosCategoria = ({ nuevoProducto, setNuevoProducto, progreso, setProgreso }) => {
+export const DatosCategoria = ({ useCase, nuevoProducto, setNuevoProducto, progreso, setProgreso }) => {
     // Segundo paso del formulario para seleccionar categoría, peso, medidas y tamaño.
     // Se valida que la categoría esté seleccionada y los campos numéricos sean válidos.
     // Al finalizar, se guarda la información y se avanza al siguiente paso.
@@ -27,18 +24,23 @@ export const DatosCategoria = ({ nuevoProducto, setNuevoProducto, progreso, setP
     const [codTamanio, setTamaio] = useState(nuevoProducto.codTamanio ?? '');
     const [categorias, setCategorias] = useState([]);
     const [tamanios, setTamanios] = useState([]);
+    const [errores, setErrores] = useState([]);
 
-    const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: nuevoProducto });
+    const { register, handleSubmit, formState: { errors }, reset } = useForm({ defaultValues: nuevoProducto });
 
     useEffect(() => {
-        const cargarCatálogo = async () => {
-            const [categoriasData, tamaniosData] = await Promise.all([getCategoria(), getTamanio()]);
+        reset(nuevoProducto);
+    }, [nuevoProducto, reset]);
+
+    useEffect(() => {
+        const cargarCatalogo = async () => {
+            const { categorias: categoriasData, tamanios: tamaniosData } = await useCase.obtenerOpcionesFormularioProducto();
             setCategorias(categoriasData);
             setTamanios(tamaniosData);
         };
 
-        cargarCatálogo();
-    }, []);
+        cargarCatalogo();
+    }, [useCase]);
 
     const handleChangecodCategoria = (event) => {
         setcodCategoria(event.target.value);
@@ -48,12 +50,15 @@ export const DatosCategoria = ({ nuevoProducto, setNuevoProducto, progreso, setP
         setTamaio(event.target.value);
     }
 
-    const onSubmit = ({ codCategoria, peso, mililitro, cantidad, codTamanio }) => {
-        const productoActualizado = Producto.from(nuevoProducto);
-        productoActualizado.setProducto({ codCategoria, peso, mililitro, cantidad, codTamanio });
-        setNuevoProducto(productoActualizado.obtenerEntidad());
-        setProgreso(progreso + 1);
-        navigate('../2')
+    const onSubmit = async ({ codCategoria, peso, mililitro, cantidad, codTamanio }) => {
+        try {
+            await useCase.avanzarPaso({ codCategoria, peso, mililitro, cantidad, codTamanio });
+            setNuevoProducto(useCase.obtenerProducto());
+            setProgreso(useCase.getPasoActual());
+            navigate('../2');
+        } catch (error) {
+            setErrores([error.message]);
+        }
     }
 
     return (
@@ -128,6 +133,11 @@ export const DatosCategoria = ({ nuevoProducto, setNuevoProducto, progreso, setP
                             </Grid>
                         </Grid>
                     </Grid>
+                    {errores.length > 0 && (
+                        <FormHelperText error sx={{ marginTop: '1rem', display: 'block' }}>
+                            {errores.join(', ')}
+                        </FormHelperText>
+                    )}
                     <Box component={'div'} sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
                         <Button onClick={() => navigate('../')} variant="contained"> Atras </Button>
                         <Button type="submit" variant="contained"> Siguiente </Button>

@@ -1,11 +1,11 @@
-import { Box, Button, Grid, MenuItem, Select, TextField } from "@mui/material"
+import { Box, Button, Grid, MenuItem, Select, TextField, FormHelperText } from "@mui/material"
+import PropTypes from 'prop-types';
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { validacion } from "../../../componentes/validaciones";
-import { Producto } from "../../../modelos/Producto";
 
-export const DatosPrecio = ({ nuevoProducto, setNuevoProducto, progreso }) => {
+export const DatosPrecio = ({ useCase, nuevoProducto, setNuevoProducto, progreso }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -15,32 +15,36 @@ export const DatosPrecio = ({ nuevoProducto, setNuevoProducto, progreso }) => {
     }, [progreso, navigate]);
 
     const [estado, setEstado] = useState(nuevoProducto.estado ?? 1);
-    const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: nuevoProducto });
+    const [errores, setErrores] = useState([]);
+    const { register, handleSubmit, formState: { errors }, reset } = useForm({ defaultValues: nuevoProducto });
+
+    useEffect(() => {
+        reset(nuevoProducto);
+    }, [nuevoProducto, reset]);
 
     const handleEstado = (event) => {
         setEstado(event.target.value)
     }
 
     const onSubmit = async ({ stock, precioCompra, precioVenta, precioSuelto }) => {
-        const productoActualizado = Producto.from(nuevoProducto);
-        productoActualizado.setProducto({
-            stock,
-            precioCompra,
-            precioVenta,
-            precioSuelto,
-            estado
-        });
-
-        setNuevoProducto(productoActualizado.obtenerEntidad());
-
         try {
+            await useCase.avanzarPaso({
+                stock,
+                precioCompra,
+                precioVenta,
+                precioSuelto,
+                estado
+            });
+
+            setNuevoProducto(useCase.obtenerProducto());
             const mensaje = await Promise.race([
-                productoActualizado.guardar(),
+                useCase.guardar(),
                 new Promise((_, reject) => setTimeout(() => reject(new Error('Tiempo de espera excedido')), 10000))
             ]);
 
             navigate('../4', { state: { mensaje } });
         } catch (error) {
+            setErrores([error.message]);
             navigate('../4', { state: { mensaje: 'No se pudo cargar el producto: ' + error.message } });
         }
     }
@@ -91,6 +95,11 @@ export const DatosPrecio = ({ nuevoProducto, setNuevoProducto, progreso }) => {
                         </Grid>
                     </Grid>
                 </Grid>
+                {errores.length > 0 && (
+                    <FormHelperText error sx={{ marginTop: '1rem', display: 'block' }}>
+                        {errores.join(', ')}
+                    </FormHelperText>
+                )}
                 <Box component={'div'} sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
                     <Button onClick={() => navigate('../2')} variant="contained"> Atras </Button>
                     <Button type="submit" variant="contained"> Cargar </Button>
@@ -98,4 +107,11 @@ export const DatosPrecio = ({ nuevoProducto, setNuevoProducto, progreso }) => {
             </form>
         </Box>
     );
+};
+
+DatosPrecio.propTypes = {
+    useCase: PropTypes.object.isRequired,
+    nuevoProducto: PropTypes.object.isRequired,
+    setNuevoProducto: PropTypes.func.isRequired,
+    progreso: PropTypes.number.isRequired,
 };
