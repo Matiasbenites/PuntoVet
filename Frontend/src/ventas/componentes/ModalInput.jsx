@@ -1,6 +1,6 @@
 import { Box, Grid, Modal, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { ButonVerde, CustomSelect } from "../../componetes";
+import { ButonVerde, CustomSelect } from "../../componentes";
 
 const style = {
     position: 'absolute',
@@ -46,9 +46,9 @@ export const ModalInput = ({ open, handleClose, producto, opcionPago, onProducto
                 codProducto,
                 nombre,
                 cantidad,
-                precio,
+                precioUnitario: precio,
                 subTotal,
-                opcionVenta,
+                tipoVenta: opcionVenta,
                 nombreMascotas,
                 nombreEdades
             }
@@ -82,43 +82,46 @@ export const ModalInput = ({ open, handleClose, producto, opcionPago, onProducto
     const handleOpcionVenta = (value) => setOpcionVenta(value);
 
     useEffect(() => {
-        switch (opcionVenta) {
-            case 3:
-                setPrecio(precioVenta)
-                break;
-            default:
-                setPrecio(precioSuelto)
-                break;
-        }
+        const valorPrecio = opcionVenta === 3 ? precioVenta : precioSuelto;
+        setPrecio(valorPrecio);
 
-        if (opcionVenta === 3 && auxCantidad > stock) {
+        if (opcionVenta === 3 && Number(auxCantidad) > Number(stock)) {
             setErrores('Stock insuficiente');
+            setAuxSubTotal(0);
+            setSubTotal(0);
             return;
         }
 
-        if (opcionVenta != 1) {
-            setAuxSubTotal(precio * auxCantidad);
-            setSubTotal(precio * auxCantidad);
+        if (opcionVenta !== 1) {
+            const total = Number(valorPrecio) * Number(auxCantidad);
+            setAuxSubTotal(total);
+            setSubTotal(total);
         } else {
-            setAuxSubTotal(parseFloat((auxCantidad / precio).toFixed(3)));
-            setSubTotal(auxCantidad);
+            if (Number(valorPrecio) === 0) {
+                setAuxSubTotal(0);
+                setSubTotal(0);
+            } else {
+                const kilos = Number(auxCantidad) / Number(valorPrecio);
+                setAuxSubTotal(Number(kilos.toFixed(3)));
+                setSubTotal(Number(auxCantidad));
+            }
         }
-        setErrores([])
-    }, [opcionPago, opcionVenta, auxCantidad, precio, producto])
+
+        if (opcionVenta !== 1 && Number(auxCantidad) > Number(pesoTotal)) {
+            setErrores('Stock insuficiente por peso');
+            return;
+        }
+
+        setErrores([]);
+    }, [opcionVenta, auxCantidad, precioVenta, precioSuelto, stock, pesoTotal]);
 
     useEffect(() => {
         if (opcionVenta === 1) {
-            if (auxSubTotal > pesoTotal) {
-                setErrores('Stock insuficiente por peso');
-                return;
-            }
-            setCantidad(auxSubTotal)
-
+            setCantidad(auxSubTotal);
         } else {
-            setCantidad(auxCantidad)
+            setCantidad(Number(auxCantidad));
         }
-
-    }, [auxSubTotal]);
+    }, [auxSubTotal, opcionVenta, auxCantidad]);
 
     return (
         <Modal
@@ -131,7 +134,7 @@ export const ModalInput = ({ open, handleClose, producto, opcionPago, onProducto
 
                     <form onSubmit={handleSubmit}>
                         <Grid container sx={{ gap: '2rem', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }} >
-                            <Typography variant='h2' sx={{ color: 'red', fontWeight: 'bold' }}> $ {precio} </Typography>
+                            <Typography variant='h2' sx={{ color: 'red', fontWeight: 'bold' }}> $ {Number(precio).toFixed(2)} </Typography>
                             <Grid item sx={{ display: 'flex', gap: '2rem' }}>
                                 <TextField
                                     label='Cantidad'
@@ -140,7 +143,7 @@ export const ModalInput = ({ open, handleClose, producto, opcionPago, onProducto
                                 />
                                 <CustomSelect options={opcionesVentaProducto} onSelect={handleOpcionVenta} estilo={estiloSelect} />
                             </Grid>
-                            <Typography variant='h2' sx={{ color: 'green', fontWeight: 'bold' }}> {(opcionVenta === 1) ? `${auxSubTotal} Kg` : `$ ${auxSubTotal}`} </Typography>
+                            <Typography variant='h2' sx={{ color: 'green', fontWeight: 'bold' }}> {(opcionVenta === 1) ? `${Number(auxSubTotal).toFixed(3)} Kg` : `$ ${Number(auxSubTotal).toFixed(2)}`} </Typography>
                         </Grid>
                         <ButonVerde texto='Agregar' type="submit" >Agregar</ButonVerde>
                     </form>

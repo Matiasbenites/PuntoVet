@@ -1,10 +1,10 @@
 import { Box, Grid } from "@mui/material";
 import { ItemVenta } from "./ItemVenta";
-import { CardPago } from "../../componetes/varios/CardPago";
-import { ButonVerde } from "../../componetes";
+import { CardPago } from "../../componentes/varios/CardPago";
+import { ButonVerde } from "../../componentes";
 
 
-export const ComponenteCarrito = ({ carrito, montoTotal, montoFinal, montoRecargo, finalizarCompra, opcionPago, onQuitarProductoCarrito }) => {
+export const ComponenteCarrito = ({ carrito, montoTotal, montoFinal, montoRecargo, finalizarCompra, opcionPago, onQuitarProductoCarrito, textoBoton = 'Finalizar Venta' }) => {
     return (
         <Grid container spacing={1} justifyContent={'space-between'} >
             <Grid className="scroll" item sm={8} >
@@ -29,7 +29,7 @@ export const ComponenteCarrito = ({ carrito, montoTotal, montoFinal, montoRecarg
                     disabled={(carrito.length > 0) ? false : true}
                     onClick={finalizarCompra}
                 >
-                    Finalizar Venta
+                    {textoBoton}
                 </ButonVerde>
             </Grid>
         </Grid>

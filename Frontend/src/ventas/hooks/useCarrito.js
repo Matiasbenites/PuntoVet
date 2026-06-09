@@ -24,16 +24,16 @@ export const useCarrito = (recargo, productoSeleccionado) => {
 
 
     useEffect(() => {
-
         let monto = 0;
         let montoRecargo = 0;
 
         for (let i = 0; i < carrito.length; i++) {
-            monto += parseInt(carrito[i].subTotal, 10)
-            montoRecargo = parseInt(carrito[i].subTotal, 10) * (recargo / 100)
+            monto += Number(carrito[i].subTotal) || 0;
         }
 
-        let precioFinal = monto + montoRecargo;
+        montoRecargo = monto * (recargo / 100);
+
+        const precioFinal = monto + montoRecargo;
         setMontoTotal(monto);
         setMontoRecargo(montoRecargo);
         setMontoFinal(precioFinal);
