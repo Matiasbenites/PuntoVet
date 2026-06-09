@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { menuDropStyle } from "../../layout/styles";
 import { useSelector } from "react-redux";
+import { getRutaInicioPorRol, ROLES, usuarioTieneRol } from "../../router/roles";
 
 
 
@@ -13,6 +14,7 @@ export const MenuDrop = () => {
     const [visible, setVisible] = useState(null);
     const open = Boolean(visible);
     const usuario = useSelector(state => state.auth.usuario);
+    const esAdministrador = usuarioTieneRol(usuario, [ROLES.ADMINISTRADOR]);
 
     const handleClick = (event) => {
         setVisible(event.currentTarget);
@@ -52,15 +54,17 @@ export const MenuDrop = () => {
                     </MenuItem>
                 </NavLink>
 
-                <NavLink
-                    to={'/productos'}
-                >
-                    <MenuItem
-                        sx={{ width: '100%' }}
-                        onClick={handleClose}>
-                        Estadisticas
-                    </MenuItem>
-                </NavLink>
+                {esAdministrador && (
+                    <NavLink
+                        to={getRutaInicioPorRol(usuario)}
+                    >
+                        <MenuItem
+                            sx={{ width: '100%' }}
+                            onClick={handleClose}>
+                            Estadisticas
+                        </MenuItem>
+                    </NavLink>
+                )}
 
             </Menu>
         </div >

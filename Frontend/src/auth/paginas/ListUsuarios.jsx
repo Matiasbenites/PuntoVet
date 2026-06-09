@@ -1,10 +1,10 @@
 import { Box, Container } from "@mui/material";
-import { ButonAmarillo, ButonVerde, SectionHeader } from "../../componetes";
+import { ButonAmarillo, ButonVerde, SectionHeader } from "../../componentes";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { deleteUsuario, getUsuarios } from "../../api/usuariosApi";
 import { ItemUsuario } from "../componentes";
-import useSnackbarSimple from "../../componetes/varios/Snackbar";
+import useSnackbarSimple from "../../componentes/varios/Snackbar";
 
 export const ListUsuarios = () => {
     const [estadoUsuario, setEstadoUsuario] = useState(true);
@@ -60,7 +60,7 @@ export const ListUsuarios = () => {
             {cargando ? <div>Cargando los usuarios </div> :
                 <div className="scroll">
                     {
-                        usuarios.length > 1 && usuarios?.map((usuario) => {
+                        usuarios.length > 0 && usuarios?.map((usuario) => {
                             return <ItemUsuario key={usuario.codUsuario} usuario={usuario} bajaUsuario={bajaUsuario} />
                         })
                     }

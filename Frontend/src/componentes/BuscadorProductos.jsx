@@ -17,9 +17,9 @@ export const BuscadorProductos = ({ onProductosObtenidos }) => {
                 return;
             } else {
                 try {
-                    const responce = await getProductos(1, 5, true, busqueda);
-                    setProducto(responce);
-                    onProductosObtenidos(responce);
+                    const response = await getProductos(1, 5, true, busqueda);
+                    setProducto(response);
+                    onProductosObtenidos(response);
 
                 } catch (error) {
                     setProducto({ message: 'Error al obtener los productos', error });

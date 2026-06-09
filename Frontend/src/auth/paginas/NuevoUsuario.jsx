@@ -1,7 +1,7 @@
 import { Container, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
 import { set, useForm } from "react-hook-form";
 import { validacionesUsuario } from "../../validaciones";
-import { ButonVerde, TituloFormularioPrincipales } from "../../componetes";
+import { ButonVerde, TituloFormularioPrincipales } from "../../componentes";
 import { useEffect, useState } from "react";
 import { ContenedorFormulariosPrincipales } from "../../layout";
 import { getUsuario, setUsuario, updateUsuario } from "../../api/usuariosApi";
@@ -44,12 +44,12 @@ export const NuevoUsuario = () => {
     const onSubmit = async (data) => {
         try {
             if (nuevoUsuario.codUsuario) {
-                const responce = await updateUsuario(data, nuevoUsuario.codUsuario);
-                setMensaje(responce.message)
+                const response = await updateUsuario(data, nuevoUsuario.codUsuario);
+                setMensaje(response.message)
             } else {
                 setNuevoUsuario(data);
-                const responce = await setUsuario(data);
-                setMensaje(responce.message)
+                const response = await setUsuario(data);
+                setMensaje(response.message)
             }
         } catch (error) {
             setMensaje(error.message)

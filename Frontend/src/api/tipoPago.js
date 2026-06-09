@@ -1,7 +1,8 @@
 import axios from "axios";
 
 export const tipoPagoApi = axios.create({
-    baseURL: 'http://localhost:4000/tipoPago'
+    baseURL: 'http://localhost:4000/tipoPago',
+    timeout: 15000
 })
 
 export const getTiposPagos = async () => {
@@ -9,6 +10,6 @@ export const getTiposPagos = async () => {
         const response = await tipoPagoApi.get('/');
         return response;
     } catch (error) {
-        return { message: 'Error al obtener los tipos de pago', error }
+        throw error.response?.data || { message: 'Error al obtener los tipos de pago', error }
     }
 }
