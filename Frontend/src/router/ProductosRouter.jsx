@@ -1,7 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import { ListaPage } from "../productos/paginas/ListaPage";
 import { NuevoProducto } from "../productos/paginas/NuevoProducto";
-import { Navbar } from "../componetes";
+import { RoleRoute } from "./RoleRoute";
+import { ROLES } from "./roles";
 
 
 export const ProductosRouter = () => {
@@ -9,8 +10,16 @@ export const ProductosRouter = () => {
         <>
             {/* <Navbar /> */}
             <Routes>
-                <Route path="/productos/*" element={<ListaPage />} />
-                <Route path="/productos/nuevo/*" element={<NuevoProducto />} />
+                <Route path="/productos/*" element={
+                    <RoleRoute rolesPermitidos={[ROLES.ADMINISTRADOR, ROLES.VENDEDOR]}>
+                        <ListaPage />
+                    </RoleRoute>
+                } />
+                <Route path="/productos/nuevo/*" element={
+                    <RoleRoute rolesPermitidos={[ROLES.ADMINISTRADOR]}>
+                        <NuevoProducto />
+                    </RoleRoute>
+                } />
             </Routes>
         </>
     );

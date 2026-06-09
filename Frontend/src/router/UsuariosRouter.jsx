@@ -1,7 +1,8 @@
 import { Route, Routes } from "react-router-dom"
 import { ListUsuarios } from "../auth/paginas/ListUsuarios"
-import { Navbar } from "../componetes"
 import { NuevoUsuario } from "../auth/paginas"
+import { RoleRoute } from "./RoleRoute"
+import { ROLES } from "./roles"
 
 
 export const UsuariosRouter = () => {
@@ -10,8 +11,16 @@ export const UsuariosRouter = () => {
         <>
             {/* <Navbar /> */}
             <Routes>
-                <Route path="/usuarios" element={<ListUsuarios />} />
-                <Route path="/usuarios/nuevo" element={<NuevoUsuario />} />
+                <Route path="/usuarios" element={
+                    <RoleRoute rolesPermitidos={[ROLES.ADMINISTRADOR]}>
+                        <ListUsuarios />
+                    </RoleRoute>
+                } />
+                <Route path="/usuarios/nuevo" element={
+                    <RoleRoute rolesPermitidos={[ROLES.ADMINISTRADOR]}>
+                        <NuevoUsuario />
+                    </RoleRoute>
+                } />
             </Routes>
         </>
     )
