@@ -2,7 +2,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Producto = require('./producto');
-const Venta = require('./venta');
 
 const VentaDetalle = sequelize.define('venta_detalle', {
     codVentaDetalle: {
@@ -15,7 +14,7 @@ const VentaDetalle = sequelize.define('venta_detalle', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Venta,
+            model: 'venta',
             key: 'codVenta'
         }
     },
@@ -28,16 +27,16 @@ const VentaDetalle = sequelize.define('venta_detalle', {
         allowNull: false
     },
     precioUnitario: { // Completo
-        type: DataTypes.STRING(100),
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     },
     subTotal: {  // Completo
-        type: DataTypes.STRING(100),
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     },
     tipoVenta: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
     }
 }, {
     tableName: 'venta_detalle',
@@ -45,6 +44,6 @@ const VentaDetalle = sequelize.define('venta_detalle', {
 }
  
 );
-VentaDetalle.belongsTo(Producto, { foreignKey: 'codProducto' })
+VentaDetalle.belongsTo(Producto, { foreignKey: 'codProducto' });
 
 module.exports = VentaDetalle;

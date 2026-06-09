@@ -3,8 +3,6 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Usuario = require('./usuario');
 const CompraDetalle = require('./compraDetalle');
-const Venta = require('./venta');
-const models = require('.');
 const Producto = require('./producto');
 
 const Compra = sequelize.define('compra', {
@@ -22,7 +20,7 @@ const Compra = sequelize.define('compra', {
         allowNull: false
     },
     montoTotal: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     }
 },

@@ -9,7 +9,6 @@ const ProductoEdad = require('./productoEdad');
 const Edad = require('./edad');
 const Mascota = require('./mascota');
 const ProductoMascota = require('./productoMascota');
-const { mascota } = require('.');
 
 const Producto = sequelize.define('producto', {
     codProducto: {
@@ -44,11 +43,6 @@ const Producto = sequelize.define('producto', {
         allowNull: true,
         defaultValue: 0
     },
-    cantidad: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        defaultValue: 0
-    },
     estado: {
         type: DataTypes.BOOLEAN,
         defaultValue: true
@@ -64,22 +58,22 @@ const Producto = sequelize.define('producto', {
         defaultValue: 0
     },
     precioVenta: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: true,
         defaultValue: 0
     },
     precioCompra: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: true,
         defaultValue: 0
     },
     precioSuelto: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: true,
         defaultValue: 0
     },
     pesoTotal: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.DOUBLE(7, 3),
         allowNull: true,
         defaultValue: 0
     },

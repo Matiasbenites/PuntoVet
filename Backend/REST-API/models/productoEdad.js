@@ -2,7 +2,6 @@
 // models/ProductoEdad.js
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const Producto = require('./producto');
 const Edad = require('./edad');
 
 const ProductoEdad = sequelize.define('producto_edad', {
@@ -10,7 +9,7 @@ const ProductoEdad = sequelize.define('producto_edad', {
         type: DataTypes.INTEGER,
         primaryKey: true,
         references: {
-            model: Producto,
+            model: 'producto',
             key: 'codProducto'
         }
     },
@@ -18,7 +17,7 @@ const ProductoEdad = sequelize.define('producto_edad', {
         type: DataTypes.INTEGER,
         primaryKey: true,
         references: {
-            model: Edad,
+            model: 'edad',
             key: 'codEdad'
         }
     }
