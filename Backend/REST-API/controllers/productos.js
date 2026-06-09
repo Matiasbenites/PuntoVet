@@ -12,6 +12,8 @@ const ProductoEdad = require('../models/productoEdad');
 const ProductoMascota = require('../models/productoMascota');
 const { where, Op } = require('sequelize');
 
+// CU: Consultar Productos | Tabla 29 | Fig 10
+// Retorna productos paginados, filtrables por estado (activo/inactivo) y búsqueda por nombre o código.
 const getProductos = async (req, res) => {
     try {
         const { pagina, limite, v_estado, busqueda } = req.query;
@@ -31,28 +33,8 @@ const getProductos = async (req, res) => {
     }
 };
 
-// const getProductosFilter = async (req, res) => {
-//     try {
-//         const { v_estado, busqueda } = req.query;
-//         const estado = v_estado === 'true' ? true : false;
-//         console.log('Estado: ', estado, 'Busqueda: ', busqueda);
-
-//         const codicionesFiltrado = {
-//             estado,
-//             [Op.or]: [
-//                 { nombre: { [Op.like]: `%${busqueda}` } },
-//                 { codProducto: { [Op.like]: `%${busqueda}` } }
-//             ]
-//         };
-
-//         const productos = await Producto.findAllData({ where: codicionesFiltrado });
-//         res.json(productos)
-
-//     } catch (error) {
-//         manejadorErrores(res, `Ocurrio un error aca: ${error}`);
-//     }
-// }
-
+// CU: Modificar Producto | Tabla 31 | Fig 11
+// Retorna un producto completo con sus relaciones (edades, mascotas) para precargar el formulario de edición.
 const getProducto = async (req, res) => {
     try {
         const { id } = req.params;
@@ -67,6 +49,9 @@ const getProducto = async (req, res) => {
 }
 
 
+// CU: Agregar Producto | Tabla 30 | Fig 10
+// Pre: datos completos (nombre, categoría, mascotas, precios, stock, peso).
+// Post: producto persistido con pesoTotal = peso × stock; relaciones de edad y mascota creadas.
 const setProductos = async (req, res) => {
     try {
         //Implementar cuando tenga todas las validaciones 
@@ -96,6 +81,9 @@ const setProductos = async (req, res) => {
 };
 
 
+// CU: Modificar Producto | Tabla 31 | Fig 11 | Contrato Tabla 26
+// Pre: producto existente; datos válidos. Post: producto actualizado, relaciones recreadas.
+// Borra y recrea las relaciones edad/mascota para reflejar los cambios del formulario.
 const updateProducto = async (req, res) => {
     try {
         const { id } = req.params;
@@ -124,6 +112,9 @@ const updateProducto = async (req, res) => {
     }
 }
 
+// CU: Eliminar Producto (baja lógica) | Tabla 32 | Fig 11 | Contrato Tabla 25
+// Post: estado toggled — activo→eliminado ("Producto eliminado correctamente")
+//                       eliminado→activo ("Producto restaurado correctamente")
 const deleteProducto = async (req, res) => {
     try {
         const { id } = req.params;

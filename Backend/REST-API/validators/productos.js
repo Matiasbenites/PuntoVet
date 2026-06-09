@@ -12,20 +12,11 @@ const validatorSetProductos = [
         if (req.body.mililitro === '') {
             req.body.mililitro = null;
         }
-        if (req.body.cantidad === '') {
-            req.body.cantidad = null;
-        }
         if (req.body.peso === '') {
             req.body.peso = null;
         }
         if (req.body.stock === '') {
             req.body.stock = null;
-        }
-        if (req.body.precioContado === '') {
-            req.body.precioContado = null;
-        }
-        if (req.body.precioLista === '') {
-            req.body.precioLista = null;
         }
         if (req.body.precioSuelto === '') {
             req.body.precioSuelto = null;

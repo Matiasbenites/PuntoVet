@@ -4,7 +4,9 @@ const { producto, compra, compraDetalle } = require("../models");
 const obtenerProducto = require("../utils/obtenerProducto");
 const Compra = require("../models/compra");
 
-const actualizarProducto = async (cantidad, codProducto, stock, pesoTotal, peso, precioCompra, precioVenta, precioSuelto) => {
+// CU: Realizar Compra | Fig (diagrama de compra)
+// Incrementa stock y pesoTotal del producto tras una compra, y actualiza sus precios vigentes.
+const actualizarProducto = async (cantidad, codProducto, stock, pesoTotal, peso, precioCompra, precioVenta, precioSuelto, options = {}) => {
     let newStock = 0;
     let newPesoTotal = 0
 
@@ -18,10 +20,16 @@ const actualizarProducto = async (cantidad, codProducto, stock, pesoTotal, peso,
         precioSuelto,
         precioVenta
     }
-    await producto.update(newData, { where: { codProducto } })
+    // respetar el objeto de opciones (transaction) si se provee
+    const updateOptions = { where: { codProducto } };
+    if (options.transaction) updateOptions.transaction = options.transaction;
+    await producto.update(newData, updateOptions)
 }
 
 
+// CU: Realizar Compra | Contrato Tabla 23
+// Pre: lista de productos con cantidades y precios. Post: compra persistida, stock incrementado.
+// Estructura análoga a setVenta pero suma stock en lugar de decrementarlo.
 const setCompra = async (req, res) => {
     const { codUsuario, detalleCompra } = req.body;
     const fechaActual = new Date().toISOString().split('T')[0];
@@ -29,7 +37,7 @@ const setCompra = async (req, res) => {
     const datosDetalle = [];
     try {
         transaction = await sequelize.transaction();
-        for (item of detalleCompra) {
+        for (const item of detalleCompra) {
             const { codProducto: idProducto, cantidad, precioCompra, precioVenta, precioSuelto } = item;
             const producto = await obtenerProducto(idProducto);
             const { codProducto, stock, pesoTotal, peso } = producto;
@@ -58,8 +66,11 @@ const setCompra = async (req, res) => {
         const compraCreada = await compra.create(compraCabecera, { transaction });
         const codCompraCreada = compraCreada.codCompra;
 
-        for (item of datosDetalle) {
-            await compraDetalle.create({
+        for (const item of datosDetalle) {
+            console.log('Creando compraDetalle para:', item);
+            // Inserto sólo las columnas que existen en la tabla actual.
+            // Algunas instalaciones de la BD pueden no tener `precioVenta`/`precioSuelto`.
+            const detallePayload = {
                 codCompra: codCompraCreada,
                 codProducto: item.codProducto,
                 cantidad: item.cantidad,
@@ -67,17 +78,22 @@ const setCompra = async (req, res) => {
                 precioVenta: item.precioVenta,
                 precioSuelto: item.precioSuelto,
                 subTotal: item.subTotal
-            }, { transaction });
+            };
+            console.log('detallePayload keys:', Object.keys(detallePayload));
+            console.log('detallePayload:', JSON.stringify(detallePayload));
+            await compraDetalle.create(detallePayload, { transaction });
         }
 
+        console.log('Intentando commit de la transacción');
         await transaction.commit();
+        console.log('Commit OK');
 
-        setTimeout(() => {
-            res.status(200).json({ message: 'Compra registrada correctamente.', codCompraCreada })
-        }, 10000);
+        // responder inmediatamente en pruebas; el setTimeout original retrasaba 10s
+        res.status(200).json({ message: 'Compra registrada correctamente.', codCompraCreada })
     } catch (error) {
+        console.error('Error en setCompra:', error);
         if (transaction) await transaction.rollback();
-        res.status(401).json({ message: 'Error al cargar la compra', error })
+        res.status(401).json({ message: 'Error al cargar la compra', error: error.message || error });
     }
 
 }

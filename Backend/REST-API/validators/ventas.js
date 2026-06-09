@@ -8,13 +8,13 @@ const validatorSetVenta = [
     check('codUsuario').isInt().notEmpty().exists(),
     check('detalleVenta').isArray().custom(value => {
         if (value.length === 0) {
-            throw new Error
+            throw new Error('Debe agregar al menos un producto a la venta')
         }
         return true;
     }),
     check('detalleVenta.*.codProducto').isInt().notEmpty(),
-    check('detalleVenta.*.cantidad').notEmpty(),
-    check('detalleVenta.*.tipoVenta').isInt().notEmpty(),
+    check('detalleVenta.*.cantidad').isFloat({ gt: 0 }).notEmpty(),
+    check('detalleVenta.*.tipoVenta').isInt({ min: 1, max: 3 }).notEmpty(),
 
     (req, res, next) => validateResult(req, res, next)
 ]

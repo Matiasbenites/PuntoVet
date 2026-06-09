@@ -10,6 +10,10 @@ const obtenerRecargo = require("../utils/calcularRecargo");
 
 
 
+// CU: Realizar Venta | Tabla 33 | Fig 12 | Contrato Tabla 27
+// Pre: carrito no vacío, tipo de pago seleccionado, stock suficiente por producto.
+// Post: venta persistida, stock decrementado, detalle registrado, transacción confirmada.
+// Curso alternativo: stock insuficiente → rollback → HTTP 400.
 const setVenta = async (req, res) => {
     let transaction;
     const datosDetalle = [];
@@ -19,41 +23,44 @@ const setVenta = async (req, res) => {
 
     try {
         let montoTotal = 0;
+        const recargo = await obtenerRecargo(opcionPago);
 
         transaction = await sequelize.transaction();
 
-        const recargo = await obtenerRecargo(opcionPago);
-        for (item of detalleVenta) {
+        for (const item of detalleVenta) {
             const { codProducto: idProducto, cantidad, tipoVenta } = item;
+            const cantidadNormalizada = Number(cantidad);
+            const tipoVentaNormalizado = Number(tipoVenta);
             const producto = await obtenerProducto(idProducto);
             const { codProducto, stock, pesoTotal, peso, precioSuelto, precioVenta } = producto;
-            const precioUnitario = await calcularPrecioUnitario(tipoVenta, precioVenta, precioSuelto);
-            const subTotal = ((precioUnitario * cantidad) * recargo);
+            const precioUnitario = await calcularPrecioUnitario(tipoVentaNormalizado, precioVenta, precioSuelto);
+            const subTotal = Number(precioUnitario) * cantidadNormalizada;
 
             datosDetalle.push({
-                codProducto: codProducto,
-                cantidad: cantidad,
-                precioUnitario: precioUnitario,
-                subTotal: subTotal,
-                tipoVenta: tipoVenta,
-            })
+                codProducto,
+                cantidad: cantidadNormalizada,
+                precioUnitario,
+                subTotal,
+                tipoVenta: tipoVentaNormalizado
+            });
 
-            await actualizarStock(codProducto, tipoVenta, cantidad, pesoTotal, peso, stock, { transaction });
+            await actualizarStock(codProducto, tipoVentaNormalizado, cantidadNormalizada, pesoTotal, peso, stock, { transaction });
             montoTotal += subTotal;
-            console.log('MontoTotal: ', montoTotal);
-        };
+        }
+
+        montoTotal = montoTotal * recargo;
 
         const ventaCabecera = {
-            codTipoPago: opcionPago,
-            codUsuario,
+            codTipoPago: Number(opcionPago),
+            codUsuario: Number(codUsuario),
             montoTotal,
             fecha: fechaActual
-        }
+        };
 
         const ventaCreada = await venta.create(ventaCabecera, { transaction });
         const codVentaGenerada = ventaCreada.codVenta;
 
-        for (item of datosDetalle) {
+        for (const item of datosDetalle) {
             await ventaDetalle.create({
                 codVenta: codVentaGenerada,
                 codProducto: item.codProducto,
@@ -66,19 +73,18 @@ const setVenta = async (req, res) => {
 
         await transaction.commit();
 
-
-        setTimeout(() => {
-            res.status(200).json({ message: "Venta registrada correctamente", codVentaGenerada });
-        }, 10000);
+        res.status(200).json({ message: "Venta registrada correctamente", codVentaGenerada });
     } catch (error) {
+        console.error('Error en setVenta:', error);
         if (transaction) await transaction.rollback();
-
-        res.status(401).json({ error: "Error al generar la venta", error });
+        res.status(400).json({ message: "Error al generar la venta", error: error.message || error });
     }
 
 }
 
 
+// CU: Visualizar Venta (detalle) | Tabla 34 CP2-CP4 | Fig 13 | Contrato Tabla 28
+// Retorna cabecera + líneas de detalle de una venta. Si no existe → HTTP 400.
 const getVenta = async (req, res) => {
     const codVenta = req.params.codVenta;
     try {
@@ -89,6 +95,8 @@ const getVenta = async (req, res) => {
     }
 }
 
+// CU: Visualizar Venta (listado) | Tabla 34 CP1 | Fig 13
+// Retorna todas las ventas, con filtro opcional por rango de fechas (dd/mm/yyyy).
 const getVentas = async (req, res) => {
     const { fecha1 = null, fecha2 = null } = req.query;
 
