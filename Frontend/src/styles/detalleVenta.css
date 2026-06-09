@@ -1,68 +1,221 @@
-.containerDetalleVenta {
-    background-color: var(--fondoItem);
-    margin: 0 auto;
-    max-width: 90rem;
-    padding: 5rem 5rem;
-    margin-top: 1rem;
+.paginaFactura {
+    background: #DDE1E0;
+    min-height: 100vh;
+    padding: 3rem 1rem;
 }
 
-.cabeceraInferior,
-.cabeceraSuperior {
+.containerDetalleVenta {
+    background: #FFFFFF;
+    margin: 0 auto;
+    max-width: 86rem;
+    padding: 4rem 4.5rem;
+    box-shadow: 0 4px 28px rgba(0, 0, 0, 0.15);
+    border-radius: .5rem;
+}
+
+/* ── HEADER ── */
+.facturaHeader {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: .5rem 2rem;
-    font-size: 2rem;
-    border-bottom: 1px solid;
+    align-items: flex-end;
+    padding-bottom: 1.8rem;
+    border-bottom: 2px solid #1F4C4B;
+    margin-bottom: 2.8rem;
 }
 
-.cabeceraMedia {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    width: 100%;
-    border-bottom: 1px solid;
-}
-
-.cabeceraMediaBox1 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-.cabeceraMediaBox1 h2 {
-    font-size: 5rem;
+.facturaNumber p,
+.facturaDate p {
+    font-size: 1.3rem;
     text-transform: uppercase;
+    letter-spacing: .1rem;
+    color: #888;
+    margin-bottom: .3rem;
 }
 
-.cabeceraMediaBox2 {
+.facturaNumber h1,
+.facturaDate h2 {
+    margin: 0;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #1F4C4B;
+}
+
+.facturaDate {
+    text-align: right;
+}
+
+/* ── BRAND ── */
+.facturaBrand {
+    display: grid;
+    grid-template-columns: 13rem 1fr;
+    gap: 3rem;
+    align-items: center;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid #E8E8E8;
+    margin-bottom: 2.2rem;
+}
+
+.facturaLogo {
     display: flex;
     justify-content: center;
-    padding: 2rem;
-    border-right: solid 1px;
+    align-items: center;
+    width: 13rem;
+    height: 13rem;
+    background: #F7F8F8;
+    border-radius: 1rem;
+    border: 1px solid #E0E0E0;
+    overflow: hidden;
 }
 
-.cabeceraMediaBox2 div {
-    width: 15rem;
-}
-
-.cabeceraMediaBox2 div img {
+.facturaLogo img {
+    width: 11rem;
+    height: 11rem;
     object-fit: contain;
-    width: 100%;
-    border-radius: 50% 50%;
 }
 
-.medio {
-    padding-top: 2rem;
+.facturaInfo h2 {
+    margin: 0 0 .8rem;
+    font-size: 3.2rem;
+    font-weight: 800;
+    letter-spacing: .2rem;
+    color: #1A1A1A;
 }
 
+.facturaInfo p {
+    margin: 0 0 .3rem;
+    font-size: 1.7rem;
+    color: #555;
+}
+
+/* ── META ── */
+.facturaMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    row-gap: .8rem;
+    margin: 0 0 2.8rem;
+    padding: 1.4rem 2rem;
+    background: #F2F5F4;
+    border-left: 4px solid #1F4C4B;
+    border-radius: .3rem;
+}
+
+.facturaMeta div {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding-right: 3rem;
+}
+
+.facturaMeta span {
+    font-size: 1.55rem;
+    color: #666;
+}
+
+.facturaMeta strong {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1F4C4B;
+}
+
+/* ── ITEMS TABLE ── */
+.facturaItemsHeader {
+    display: grid;
+    grid-template-columns: 3fr 1.2fr 1.2fr 1.2fr;
+    padding: 1rem 1.6rem;
+    background: #1F4C4B;
+    color: #fff;
+    border-radius: .4rem .4rem 0 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .07rem;
+}
+
+.facturaItems {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #E0E0E0;
+    border-top: none;
+    border-radius: 0 0 .4rem .4rem;
+    overflow: hidden;
+}
+
+.facturaItemRow {
+    display: grid;
+    grid-template-columns: 3fr 1.2fr 1.2fr 1.2fr;
+    padding: 1.2rem 1.6rem;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    background: #fff;
+}
+
+.facturaItemRow:last-child {
+    border-bottom: none;
+}
+
+.facturaItemRow:nth-child(even) {
+    background: #FAFBFB;
+}
+
+.facturaItemNombre {
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+}
+
+.facturaItemNombre strong {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #1A1A1A;
+}
+
+.facturaItemNombre small {
+    font-size: 1.35rem;
+    color: #999;
+}
+
+.facturaItemCell {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #1F4C4B;
+}
+
+/* ── FOOTER ── */
 .detalleVentaFooter {
-    font-size: 2rem;
-    justify-content: right;
-    padding: 2rem;
-    text-align: center;
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 2px solid #E8E8E8;
 }
 
-.detalleVentaFooter p:nth-child(1) {
-    text-align: right;
+.footerRow {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 2.5rem;
+    margin-bottom: .5rem;
+}
+
+.footerRow p {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06rem;
+    color: #555;
+}
+
+.footerRow strong {
+    font-size: 3.4rem;
+    font-weight: 800;
+    color: #1F4C4B;
+}
+
+.footerAddress {
+    margin: 2rem 0 0;
+    text-align: center;
+    font-size: 1.5rem;
+    color: #999;
+    padding-top: 1.5rem;
+    border-top: 1px solid #E8E8E8;
 }

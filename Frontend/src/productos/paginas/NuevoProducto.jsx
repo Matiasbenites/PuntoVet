@@ -7,20 +7,23 @@ import { CardProducto } from "../componentes/CardProducto";
 import { getProducto } from "../../api/productos/productosApi";
 import { ContenedorFormulariosPrincipales } from "../../layout/ContenedorFormulariosPrincipales";
 import { TituloFormularioPrincipales } from "../../componentes";
-import { CrearProductoUseCase } from "../../useCases/CrearProductoUseCase";
-import { ValidadorService } from "../../services/ValidadorService";
-import { ProductosServiceAdapter, CatalogosServiceAdapter } from "../../services/ServicesAdapter";
 
-export const NuevoProducto = () => {
-    // Contenedor principal del formulario multi-paso para crear o editar productos.
-    // Maneja los 4 pasos: datos principales, categoría, mascotas, y precios.
-    // Si se abre para editar, carga los datos del producto existente.
-    // Muestra una preview del producto mientras se llena el formulario.
-    const [useCase] = useState(() => {
-        const validadorService = new ValidadorService();
-        const productosService = new ProductosServiceAdapter();
-        const catalogosService = new CatalogosServiceAdapter();
-        return new CrearProductoUseCase(productosService, catalogosService, validadorService);
+export const NuevoProducto = ({ producto }) => {
+    const [nuevoProducto, setNuevoProducto] = useState({
+        codProducto: '',
+        nombre: '',
+        descripcion: '',
+        codCategoria: '',
+        stock: '',
+        peso: '',
+        codTamanio: '',
+        mililitro: '',
+        codMascotas: '',
+        codEdades: '',
+        precioCompra: '',
+        precioVenta: '',
+        precioSuelto: '',
+        imagen: {}
     });
     const [nuevoProducto, setNuevoProducto] = useState(useCase.obtenerProducto());
     const [progreso, setProgreso] = useState(useCase.getPasoActual());

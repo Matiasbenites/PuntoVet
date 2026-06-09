@@ -13,8 +13,9 @@ const TipoPago = sequelize.define('tipo_pago', {
         allowNull: false
     },
     recargo: {
-        type: DataTypes.DOUBLE(5, 3),
-        allowNull: false
+        type: DataTypes.DOUBLE(5, 2),
+        allowNull: false,
+        defaultValue: 0
     },
     estado: {
         type: DataTypes.BOOLEAN,

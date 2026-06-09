@@ -5,9 +5,6 @@
 
 
 export const validacion = {
-    // Reglas de validación para los campos del formulario de productos.
-    // Cada campo tiene sus propias restricciones de largo, formato, etc.
-    // React Hook Form usa estas reglas para mostrar mensajes de error al usuario.
     nombre: {
         required: { value: true, message: 'Es requerido' },
         maxLength: { value: 100, message: 'Debe ser mayor a 100 caracteres' },

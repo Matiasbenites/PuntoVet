@@ -2,7 +2,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Producto = require('./producto');
-const Compra = require('./compra');
 
 const CompraDetalle = sequelize.define('compra_detalle', {
     codCompraDetalle: {
@@ -14,7 +13,7 @@ const CompraDetalle = sequelize.define('compra_detalle', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Compra,
+            model: 'compra',
             key: 'codCompra'
         }
     },
@@ -23,23 +22,23 @@ const CompraDetalle = sequelize.define('compra_detalle', {
         allowNull: false,
     },
     precioCompra: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     },
     precioVenta: {
-        type: DataTypes.STRING(100),
-        allowNull: false
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: true
     },
     precioSuelto: {
-        type: DataTypes.STRING(100),
-        allowNull: false
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: true
     },
     cantidad: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
     subTotal: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     }
 },

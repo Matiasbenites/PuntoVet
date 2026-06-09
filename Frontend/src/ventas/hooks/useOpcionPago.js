@@ -7,9 +7,10 @@ export const useSeleccionarOpcionPago = () => {
     const [recargo, setRecargo] = useState(0);
 
     const seleccionOpcionPago = (value) => {
+        if (!value) return;
         const { codTipoPago, recargo } = value;
-        setOpcionPago(codTipoPago);
-        setRecargo(recargo);
+        setOpcionPago(Number(codTipoPago));
+        setRecargo(Number(recargo) || 0);
     };
 
 

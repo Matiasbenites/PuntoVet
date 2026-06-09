@@ -6,9 +6,6 @@ import { Search } from "@mui/icons-material";
 
 
 export const BuscadorProductos = ({ onProductosObtenidos }) => {
-    // Buscador en tiempo real de productos.
-    // Mientras el usuario escribe, se filtran y buscan productos en la base de datos.
-    // Solo realiza la búsqueda cuando el texto tiene 3 o más caracteres.
     const [busqueda, setBusqueda] = useState('');
     const [producto, setProducto] = useState('');
 
@@ -20,9 +17,9 @@ export const BuscadorProductos = ({ onProductosObtenidos }) => {
                 return;
             } else {
                 try {
-                    const responce = await getProductos(1, 5, true, busqueda);
-                    setProducto(responce);
-                    onProductosObtenidos(responce);
+                    const response = await getProductos(1, 5, true, busqueda);
+                    setProducto(response);
+                    onProductosObtenidos(response);
 
                 } catch (error) {
                     setProducto({ message: 'Error al obtener los productos', error });

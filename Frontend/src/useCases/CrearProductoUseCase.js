@@ -1,9 +1,11 @@
 import { Producto } from "../modelos/Producto";
 
 /**
- * UseCase independiente del framework para crear un producto.
- * Maneja toda la lógica de negocio del flujo multi-paso sin dependencias de React.
- * Reutilizable en cualquier framework (Vue, Angular, Svelte, etc.)
+ * CU: Agregar Producto / Modificar Producto | Tabla 30 / Tabla 31 | Diagrama de Clases Fig 17
+ * UseCase independiente del framework para crear o editar un producto.
+ * Implementa el patrón Observer (Subject): los componentes React se suscriben a eventos
+ * ('productoActualizado', 'pasoAvanzado', etc.) y reaccionan sin acoplamiento directo.
+ * Maneja el flujo multi-paso: datosPrincipales → categoria → mascota → precio → confirmacion.
  */
 export class CrearProductoUseCase {
     constructor(productosService, catalogosService, validadorService) {
@@ -39,7 +41,9 @@ export class CrearProductoUseCase {
     }
 
     /**
-     * Avanza al siguiente paso si la validación es exitosa
+     * CU: Agregar Producto | Tabla 30 — valida el paso actual y avanza al siguiente.
+     * Dispara 'pasoAvanzado' y 'productoActualizado' para que la UI reaccione.
+     * Lanza Error con los mensajes de validación si el paso no es válido.
      */
     async avanzarPaso(datosValidar = {}) {
         const validacion = await this.validarPasoActual(datosValidar);
@@ -140,7 +144,8 @@ export class CrearProductoUseCase {
     }
 
     /**
-     * Guarda el producto en el backend
+     * CU: Agregar Producto | Tabla 30 — paso final: valida completitud y persiste en el backend.
+     * Pre: los 4 pasos del formulario completados. Post: producto creado en BD.
      */
     async guardar() {
         const validacion = await this.validarProductoCompleto();
@@ -210,6 +215,15 @@ export class CrearProductoUseCase {
     notificar(evento, datos) {
         if (this.listeners.has(evento)) {
             this.listeners.get(evento).forEach(callback => callback(datos));
+        }
+    }
+
+    /**
+     * Establece el paso actual directamente (para sincronizar con la ruta en navegación back/forward)
+     */
+    setPasoActual(n) {
+        if (n >= 0 && n < this.pasos.length) {
+            this.pasoActual = n;
         }
     }
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { validacion } from "../../../componentes/validaciones";
+import { setProducto, updateProducto } from "../../../api/productos/productosApi";
 
 export const DatosPrecio = ({ useCase, nuevoProducto, setNuevoProducto, progreso }) => {
     const navigate = useNavigate();

@@ -1,35 +1,34 @@
 import axios from "axios";
 
-
 export const ventaApi = axios.create({
-    baseURL: 'http://localhost:4000'
+    baseURL: 'http://localhost:4000',
+    timeout: 15000
 })
 
 export const setNuevaVenta = async (venta) => {
     try {
-        const response = ventaApi.post('/venta', venta);
-        console.log(response);
-        return response;
+        const response = await ventaApi.post('/venta', venta);
+        return response.data;
     } catch (error) {
-        return { message: 'Error al registrar la venta', error }
+        throw error.response?.data || { message: 'Error al registrar la venta. Verifique que el backend este levantado.', error };
     }
 }
 
 export const getVenta = async (codVenta) => {
     try {
         const response = await ventaApi.get(`/venta/${codVenta}`);
-        return response;
+        return response.data;
     } catch (error) {
-        return { error: error.response ? error.response.data : 'Error desconocido' }
+        throw error.response?.data || { message: 'Error al obtener la venta', error };
     }
 }
 
 export const getVentas = async (fecha1, fecha2) => {
     try {
-        const parametros = (fecha1 && fecha2) ? `?fecha1=${fecha1}&&fecha2=${fecha2}` : '';
-        const { data } = await ventaApi.get(`/venta${parametros}`);
-        return data;
+        const parametros = (fecha1 && fecha2) ? `?fecha1=${fecha1}&fecha2=${fecha2}` : '';
+        const response = await ventaApi.get(`/venta${parametros}`);
+        return response.data;
     } catch (error) {
-        return { error }
+        throw error.response?.data || { message: 'Error al obtener las ventas', error };
     }
 }

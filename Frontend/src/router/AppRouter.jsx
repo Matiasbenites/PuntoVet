@@ -11,6 +11,7 @@ import '../styles';
 import 'animate.css';
 import { CompraRouter } from "./CompraRouter";
 import { DetalleVentaPage } from "../ventas/paginas/DetalleVentaPage";
+import { DetalleTransaccionRoute } from "./RoleRoute";
 
 export const AppRouter = () => {
     return (
@@ -35,7 +36,9 @@ export const AppRouter = () => {
 
             <Route path="/:type/detalle/:cod" element={
                 <PrivateRoute>
-                    <DetalleVentaPage />
+                    <DetalleTransaccionRoute>
+                        <DetalleVentaPage />
+                    </DetalleTransaccionRoute>
                 </PrivateRoute>
             } />
 

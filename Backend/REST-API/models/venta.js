@@ -3,7 +3,6 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const TipoPago = require('./tipoPago');
 const Usuario = require('./usuario');
-const { venta, ventaDetalle, usuario } = require('.');
 const VentaDetalle = require('./ventaDetalle');
 const Producto = require('./producto');
 
@@ -30,7 +29,7 @@ const Venta = sequelize.define('venta', {
         allowNull: false
     },
     montoTotal: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     }
 },
@@ -44,6 +43,9 @@ Venta.hasMany(VentaDetalle, { foreignKey: "codVenta" });
 Venta.belongsTo(Usuario, { foreignKey: 'codUsuario' });
 Venta.belongsTo(TipoPago, { foreignKey: 'codTipoPago' })
 
+// CU: Visualizar Venta | Fig 13 | Contrato Tabla 28 (Post: detalle retornado)
+// Retorna la venta con todos sus detalles: productos, cantidades, precios,
+// tipo de pago, recargo y usuario. Lanza error si el codVenta no existe.
 Venta.VentaDetallada = async (codVenta) => {
     const unaVenta = await Venta.findOne({
         where: { codVenta },

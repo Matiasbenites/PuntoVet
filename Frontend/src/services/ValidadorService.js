@@ -1,10 +1,12 @@
 /**
+ * CU: Agregar / Modificar Producto | Tabla 30 / Tabla 31
  * Servicio de validación independiente del framework.
- * Contiene toda la lógica de validación reutilizable en cualquier frontend.
+ * Cada método cubre un paso del formulario multi-paso de producto.
+ * Utilizado por CrearProductoUseCase.validarPasoActual() antes de avanzar.
  */
 export class ValidadorService {
     /**
-     * Valida datos principales (nombre, descripción)
+     * Paso 0 — Datos principales | Tabla 30 CP (nombre y descripción requeridos)
      */
     validarDatosPrincipales(datos) {
         const errores = [];
@@ -30,7 +32,7 @@ export class ValidadorService {
     }
 
     /**
-     * Valida categoría y tamaño
+     * Paso 1 — Categoría y tamaño | Tabla 30 CP (codCategoria y codTamanio requeridos)
      */
     validarCategoria(datos) {
         const errores = [];
@@ -49,9 +51,6 @@ export class ValidadorService {
         if (datos.mililitro && isNaN(datos.mililitro)) {
             errores.push('Los mililitros deben ser un número válido');
         }
-        if (datos.cantidad && isNaN(datos.cantidad)) {
-            errores.push('La cantidad debe ser un número válido');
-        }
 
         return {
             valido: errores.length === 0,
@@ -60,7 +59,7 @@ export class ValidadorService {
     }
 
     /**
-     * Valida mascotas y edades
+     * Paso 2 — Mascotas y edades | Tabla 30 CP (al menos una mascota y una edad requeridas)
      */
     validarMascota(datos) {
         const errores = [];
@@ -79,7 +78,8 @@ export class ValidadorService {
     }
 
     /**
-     * Valida precios
+     * Paso 3 — Precios y stock | Tabla 30 CP (stock > 0, precioCompra y precioVenta requeridos)
+     * Regla de negocio: precioVenta no puede ser menor a precioCompra.
      */
     validarPrecio(datos) {
         const errores = [];

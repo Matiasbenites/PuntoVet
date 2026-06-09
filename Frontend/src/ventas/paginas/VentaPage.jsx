@@ -13,6 +13,7 @@ import { SelectorTipoPago } from "../../componentes/SelectorTipoPago";
 import { useCarrito, useProductos, useSeleccionarOpcionPago } from "../hooks/index";
 import { ComponenteCarrito } from "../componentes/Carrito";
 import { BuscadorProductosDesplegable } from "../componentes/BuscadorProductoDespegable";
+import { ROLES, usuarioTieneRol } from "../../router/roles";
 
 const estiloSelectMetodoPago = {
     minWidth: '30rem',
@@ -21,7 +22,9 @@ const estiloSelectMetodoPago = {
 export const VentaPage = () => {
 
     const navigate = useNavigate();
-    const { codUsuario } = useSelector(state => state.auth.usuario)
+    const usuario = useSelector(state => state.auth.usuario)
+    const { codUsuario } = usuario;
+    const esAdministrador = usuarioTieneRol(usuario, [ROLES.ADMINISTRADOR]);
 
     const { opcionPago, recargo, seleccionOpcionPago } = useSeleccionarOpcionPago();
     const { productos, productoSeleccionado, openModal, buscarProducto, closeModal, listarProductos } = useProductos()
@@ -31,21 +34,48 @@ export const VentaPage = () => {
 
     const showLoadingPageFuction = () => setShowLoadingPage(true);
 
+    // CU: Realizar Venta | Tabla 33 | Fig 12 | Contrato Tabla 27
+    // Pre: carrito no vacío, tipo de pago seleccionado, usuario autenticado.
+    // Post: venta enviada al backend; si tiene éxito navega al detalle (recibo).
+    // Validaciones CP2/CP3 de Tabla 33 se resuelven aquí antes de llegar al backend.
     const finalizarCompra = async () => {
+        if (!codUsuario) {
+            alert('No se encontro un usuario activo para registrar la venta.');
+            return;
+        }
+
+        if (!opcionPago) {
+            alert('Debe seleccionar un metodo de pago.');
+            return;
+        }
+
+        if (carrito.length === 0) {
+            alert('Debe agregar al menos un producto al carrito.');
+            return;
+        }
+
         const detalleVenta = carrito.map((item) => ({
             codProducto: item.codProducto,
-            cantidad: item.cantidad,
-            tipoVenta: item.opcionVenta
-        }))
+            cantidad: Number(item.cantidad),
+            tipoVenta: Number(item.tipoVenta)
+        }));
         const venta = {
-            opcionPago,
-            codUsuario,
+            opcionPago: Number(opcionPago),
+            codUsuario: Number(codUsuario),
             detalleVenta
-        }
+        };
         showLoadingPageFuction();
-        const { data } = await setNuevaVenta(venta);
-        const { codVentaGenerada } = data
-        navigate(`/ventas/detalle/${codVentaGenerada}`)
+
+        try {
+            const data = await setNuevaVenta(venta);
+            const { codVentaGenerada } = data;
+            navigate(`/ventas/detalle/${codVentaGenerada}`);
+        } catch (error) {
+            console.error('Error al registrar venta:', error);
+            setShowLoadingPage(false);
+            const detalle = error.errors?.[0]?.msg || error.error || error.message || 'No se pudo registrar la venta.';
+            alert(detalle);
+        }
     }
 
     return (
@@ -54,7 +84,7 @@ export const VentaPage = () => {
             <SectionHeader>
                 <BuscadorProductos onProductosObtenidos={listarProductos} />
                 <SelectorTipoPago onSelect={seleccionOpcionPago} estilo={estiloSelectMetodoPago} />
-                <ButonVerde onClick={() => navigate('/ventas/lista')}>Ventas</ButonVerde>
+                {esAdministrador && <ButonVerde onClick={() => navigate('/ventas/lista')}>Ventas</ButonVerde>}
             </SectionHeader>
             <BuscadorProductosDesplegable
                 productos={productos}
@@ -68,6 +98,7 @@ export const VentaPage = () => {
                 finalizarCompra={finalizarCompra}
                 opcionPago={opcionPago}
                 onQuitarProductoCarrito={onQuitarProductoCarrito}
+                textoBoton="Finalizar Venta"
             />
 
             {

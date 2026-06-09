@@ -45,8 +45,8 @@ const subirImagen = async (imagen) => {
     formData.append('imagen', imagen);
 
     try {
-        const responce = await productosApi.post('/storage', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-        return responce.data;
+        const response = await productosApi.post('/storage', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        return response.data;
     } catch (error) {
         throw new Error(`Error al cargar la imagen: ${error}`);
     }
@@ -57,12 +57,11 @@ export const setProducto = async (nuevoProducto) => {
     delete productoPayload.codProducto;
 
     try {
-        if (productoPayload.imagen instanceof File) {
-            productoPayload.imagen = await subirImagen(productoPayload.imagen);
-        }
-
-        const responce = await productosApi.post('/productos', productoPayload);
-        return responce.data.message;
+        const { data } = await setImagen(datosImagen);
+        console.log('enlace de imagen: ', data);
+        nuevoProducto.imagen = data;
+        const response = await productosApi.post('/productos', nuevoProducto);
+        return response.data.message;
     } catch (error) {
         throw new Error(error.message || 'Error al crear el producto');
     }
@@ -76,8 +75,8 @@ export const updateProducto = async (nuevoProducto) => {
             productoPayload.imagen = await subirImagen(productoPayload.imagen);
         }
 
-        const responce = await productosApi.put(`/productos/${productoPayload.codProducto}`, productoPayload)
-        return responce.data.message;
+        const response = await productosApi.put(`/productos/${nuevoProducto.codProducto}`, nuevoProducto)
+        return response.data.message;
     } catch (error) {
         throw new Error(error.message || `Error al actualizar el producto ${productoPayload.codProducto}`);
     }
@@ -87,8 +86,8 @@ export const deleteProducto = async (codProducto) => {
     // Pide al backend que cambie el estado del producto.
     // El backend decide si marca el producto como eliminado o lo restaura.
     try {
-        const responce = await productosApi.delete(`/productos/${codProducto}`)
-        return responce.data
+        const response = await productosApi.delete(`/productos/${codProducto}`)
+        return response.data
     } catch (error) {
         return { message: 'Ocurrio un error al eliminar el producto', error }
     }

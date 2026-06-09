@@ -13,8 +13,8 @@ export const ListaVenta = () => {
 
     useEffect(() => {
         const obtenerVentas = async () => {
-            const responce = await getVentas();
-            setVentas(responce);
+            const response = await getVentas();
+            setVentas(response);
             setIsLoading(false)
         }
         obtenerVentas();
@@ -31,11 +31,17 @@ export const ListaVenta = () => {
         return <Typography>Cargando Datos... </Typography>
     }
 
-    const onVentas = ({ data }) => {
-        if (!data) {
+    const onVentas = (resultado) => {
+        if (!resultado) {
             return;
         }
-        setVentas([data]);
+
+        if (resultado.data) {
+            setVentas([resultado.data]);
+            return;
+        }
+
+        setVentas(Array.isArray(resultado) ? resultado : [resultado]);
     }
 
     return (

@@ -3,15 +3,16 @@ import axios from "axios";
 
 
 export const compraApi = axios.create({
-    baseURL: 'http://localhost:4000/compra'
+    baseURL: 'http://localhost:4000/compra',
+    timeout: 15000
 });
 
 export const setCompra = async (compra) => {
     try {
         const response = await compraApi.post('/', compra);
-        return response;
+        return response.data;
     } catch (error) {
-        return { message: 'Error al registrar la compra', error };
+        throw error.response?.data || { message: 'Error al registrar la compra. Verifique que el backend este levantado.', error };
     }
 }
 

@@ -22,11 +22,12 @@ export const LoginPage = () => {
     const [message, setMessage] = useState('')
 
 
-    const onLogin = async (responce) => {
-        const { status, data: { message, datos } } = responce;
+    const onLogin = async (response) => {
+        const { status, data: { message, datos } } = response;
         if (status === 200) {
+            localStorage.removeItem('user');
             dispatch(setAuth({ usuario: datos }));
-            (mantenerSesion) && localStorage.setItem('user', JSON.stringify(datos))
+            if (mantenerSesion) localStorage.setItem('user', JSON.stringify(datos));
             navigate('/ventas', { replace: true });
         } else {
             setMessage(message);
@@ -38,8 +39,8 @@ export const LoginPage = () => {
 
     const onSubmit = async (values) => {
         try {
-            const responce = await login(values);
-            await onLogin(responce);
+            const response = await login(values);
+            await onLogin(response);
         } catch (error) {
             setMessage('Error de conexion: ', error.message);
         }
@@ -77,7 +78,7 @@ export const LoginPage = () => {
                                 </Grid>
                             </Grid>
                             <Grid item sm={6} padding={1}>
-                                <CardMedia component='img' alt="Vet Safe" image="../../../img/PuntoVet-logo.png" />
+                                <CardMedia component='img' alt="Vet Safe" image="../../../img/logo.png" />
                             </Grid>
                         </Grid>
                     </form>

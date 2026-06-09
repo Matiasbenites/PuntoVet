@@ -8,6 +8,8 @@ const ProductoEdad = require('../models/productoEdad');
 const ProductoMascota = require('../models/productoMascota');
 const { where, Op } = require('sequelize');
 
+// CU: Consultar Productos | Tabla 29 | Fig 10
+// Retorna productos paginados, filtrables por estado (activo/inactivo) y búsqueda por nombre o código.
 const getProductos = async (req, res) => {
     try {
         // Devuelve una lista de productos según página, límite, estado y búsqueda.
@@ -29,6 +31,8 @@ const getProductos = async (req, res) => {
     }
 };
 
+// CU: Modificar Producto | Tabla 31 | Fig 11
+// Retorna un producto completo con sus relaciones (edades, mascotas) para precargar el formulario de edición.
 const getProducto = async (req, res) => {
     try {
         // Busca un solo producto por su código.
@@ -45,6 +49,9 @@ const getProducto = async (req, res) => {
 }
 
 
+// CU: Agregar Producto | Tabla 30 | Fig 10
+// Pre: datos completos (nombre, categoría, mascotas, precios, stock, peso).
+// Post: producto persistido con pesoTotal = peso × stock; relaciones de edad y mascota creadas.
 const setProductos = async (req, res) => {
     try {
         // Este método crea un nuevo producto cuando el formulario envía datos.
@@ -78,6 +85,9 @@ const setProductos = async (req, res) => {
 };
 
 
+// CU: Modificar Producto | Tabla 31 | Fig 11 | Contrato Tabla 26
+// Pre: producto existente; datos válidos. Post: producto actualizado, relaciones recreadas.
+// Borra y recrea las relaciones edad/mascota para reflejar los cambios del formulario.
 const updateProducto = async (req, res) => {
     try {
         // Este método actualiza un producto existente.
@@ -110,6 +120,9 @@ const updateProducto = async (req, res) => {
     }
 }
 
+// CU: Eliminar Producto (baja lógica) | Tabla 32 | Fig 11 | Contrato Tabla 25
+// Post: estado toggled — activo→eliminado ("Producto eliminado correctamente")
+//                       eliminado→activo ("Producto restaurado correctamente")
 const deleteProducto = async (req, res) => {
     try {
         // Este método no borra el producto físicamente.

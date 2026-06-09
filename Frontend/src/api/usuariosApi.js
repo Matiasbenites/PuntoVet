@@ -56,9 +56,9 @@ export const deleteUsuario = async (codUsuario) => {
 
 export const login = async (usuario) => {
     try {
-        const responce = await usuariosApi.post('/usuarios/login', usuario);
-        //console.log(responce);
-        return responce;
+        const response = await usuariosApi.post('/usuarios/login', usuario);
+        //console.log(response);
+        return response;
     } catch (error) {
         const { response } = error;
         return response;

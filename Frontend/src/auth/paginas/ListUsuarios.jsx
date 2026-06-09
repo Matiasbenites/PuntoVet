@@ -60,7 +60,7 @@ export const ListUsuarios = () => {
             {cargando ? <div>Cargando los usuarios </div> :
                 <div className="scroll">
                     {
-                        usuarios.length > 1 && usuarios?.map((usuario) => {
+                        usuarios.length > 0 && usuarios?.map((usuario) => {
                             return <ItemUsuario key={usuario.codUsuario} usuario={usuario} bajaUsuario={bajaUsuario} />
                         })
                     }

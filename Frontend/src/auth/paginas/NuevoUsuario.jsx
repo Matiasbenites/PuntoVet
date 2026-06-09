@@ -44,12 +44,12 @@ export const NuevoUsuario = () => {
     const onSubmit = async (data) => {
         try {
             if (nuevoUsuario.codUsuario) {
-                const responce = await updateUsuario(data, nuevoUsuario.codUsuario);
-                setMensaje(responce.message)
+                const response = await updateUsuario(data, nuevoUsuario.codUsuario);
+                setMensaje(response.message)
             } else {
                 setNuevoUsuario(data);
-                const responce = await setUsuario(data);
-                setMensaje(responce.message)
+                const response = await setUsuario(data);
+                setMensaje(response.message)
             }
         } catch (error) {
             setMensaje(error.message)

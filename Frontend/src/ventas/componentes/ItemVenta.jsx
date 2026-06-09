@@ -8,7 +8,6 @@ export const ItemVenta = ({ producto = null, detalle = null, onQuitarProductoCar
         nombre,
         nombreMascotas,
         nombreEdades,
-        opcionVenta,
         tipoVenta,
         precioUnitario: precio,
         subTotal,
@@ -17,10 +16,26 @@ export const ItemVenta = ({ producto = null, detalle = null, onQuitarProductoCar
     } = producto || detalle || {};
 
     const nombreProducto = producto ? nombre : detalle?.producto?.nombre;
+    const precioFinal = Number(precio || precioCompra || 0).toFixed(2);
+    const subTotalFinal = Number(subTotal || 0).toFixed(2);
+    const unidad = (tipoVenta != null) ? ((tipoVenta === 3) ? 'Uds' : 'Kg') : 'Uds';
+    const isDetalle = Boolean(detalle && !producto);
 
+    const handleEliminarProducto = () => onQuitarProductoCarrito?.(codProducto)
 
-
-    const handleEliminarProducto = () => onQuitarProductoCarrito(codProducto)
+    if (isDetalle) {
+        return (
+            <div className="facturaItemRow">
+                <div className="facturaItemNombre">
+                    <strong>{nombreProducto || 'Producto'}</strong>
+                    <small>Cod: {codProducto}</small>
+                </div>
+                <div className="facturaItemCell">${precioFinal}</div>
+                <div className="facturaItemCell">{cantidad} {unidad}</div>
+                <div className="facturaItemCell">${subTotalFinal}</div>
+            </div>
+        );
+    }
 
     return (
         <Grid container sx={{
@@ -33,40 +48,31 @@ export const ItemVenta = ({ producto = null, detalle = null, onQuitarProductoCar
             fontSize: '1.7rem',
             border: 'solid 1px'
         }}>
-            <Grid item container alignItems={'center'} sm={(producto ? 11 : 12)}>
-                <Grid item sx={{ display: 'flex', gap: '.5rem' }}>
-                    <Typography variant="span" color={"#008512"}>{codProducto} || {nombreProducto} </Typography>
-                    {
-                        (producto) && (
-                            <Typography variant="span" color={"#000000"}>|| Para: {nombreMascotas}  {nombreEdades}</Typography>
-                        )
-                    }
-                </Grid>
-
-                <Grid item sx={{ display: 'flex', justifyContent: 'space-around', width: '100%' }}>
-                    <Grid item sx={{ display: 'flex', gap: '.5rem', alignItems: 'center' }}>
-                        <Typography>Precio: </Typography>
-                        <Typography variant="span" color={"#008512"}>{precio || precioCompra}</Typography>
-                    </Grid>
-
-                    <Grid item sx={{ display: 'flex', gap: '.5rem', alignItems: 'center' }}>
-                        <Typography>Cantidad: </Typography>
-                        <Typography variant="span" color={"#008512"}>{cantidad} {(tipoVenta != null) ? ((tipoVenta === 3) ? 'Uds' : 'Kg') : 'Uds'}  </Typography>
-                    </Grid>
-                    <Grid item sx={{ display: 'flex', gap: '.5rem', alignItems: 'center' }}>
-                        <Typography>SubTotal: </Typography>
-                        <Typography variant="span" color={"#008512"}>{Number(subTotal).toFixed(2)}</Typography>
-                    </Grid>
-                </Grid>
+            <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
+                <Typography sx={{ fontSize: '1.85rem', fontWeight: 700, color: '#1D3C34' }}>{nombreProducto || 'Producto'}</Typography>
+                <Typography sx={{ color: '#5A5A5A' }}>Cod: {codProducto}</Typography>
+                <Typography sx={{ color: '#5A5A5A' }}>Para: {nombreMascotas} {nombreEdades}</Typography>
             </Grid>
-            {
-                (producto) && (
-                    <Grid item sm={1} sx={{ display: 'flex', justifyContent: 'right' }} >
-                        <Button onClick={handleEliminarProducto}  ><HighlightOffSharp sx={{ color: 'red', }} /></Button>
-                    </Grid>
-                )
-            }
-        </Grid >
+
+            <Grid item xs={4} md={2} sx={{ display: 'flex', flexDirection: 'column', gap: '.25rem' }}>
+                <Typography sx={{ color: '#5A5A5A' }}>Precio</Typography>
+                <Typography sx={{ fontWeight: 700, color: '#008512' }}>${precioFinal}</Typography>
+            </Grid>
+
+            <Grid item xs={4} md={2} sx={{ display: 'flex', flexDirection: 'column', gap: '.25rem' }}>
+                <Typography sx={{ color: '#5A5A5A' }}>Cantidad</Typography>
+                <Typography sx={{ fontWeight: 700, color: '#008512' }}>{cantidad} {unidad}</Typography>
+            </Grid>
+
+            <Grid item xs={4} md={2} sx={{ display: 'flex', flexDirection: 'column', gap: '.25rem' }}>
+                <Typography sx={{ color: '#5A5A5A' }}>SubTotal</Typography>
+                <Typography sx={{ fontWeight: 700, color: '#008512' }}>${subTotalFinal}</Typography>
+            </Grid>
+
+            <Grid item md={1} sx={{ display: 'flex', justifyContent: 'right' }}>
+                <Button onClick={handleEliminarProducto}><HighlightOffSharp sx={{ color: 'red' }} /></Button>
+            </Grid>
+        </Grid>
     )
 }
 

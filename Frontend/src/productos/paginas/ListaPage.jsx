@@ -6,8 +6,12 @@ import { Link, useLocation } from "react-router-dom";
 import { ProductoModal } from "../componentes/ProductoModal";
 import { deleteProducto, getProductos } from "../../api/productos/productosApi";
 import useSnackbarSimple from "../../componentes/varios/Snackbar";
+import { useSelector } from "react-redux";
+import { ROLES, usuarioTieneRol } from "../../router/roles";
 
 export const ListaPage = () => {
+    const usuario = useSelector(state => state.auth.usuario);
+    const esAdministrador = usuarioTieneRol(usuario, [ROLES.ADMINISTRADOR]);
     const limite = 15;
     const location = useLocation();
     const [open, setOpen] = useState(false);
@@ -103,10 +107,12 @@ export const ListaPage = () => {
                 <SectionHeader>
                     <BuscadorProductos onProductosObtenidos={onBuscadorProducto} />
                     {/* <Buscador parametro='un producto' onSearch={buscadorProducto} /> */}
-                    <Box component='div' display={'flex'} gap={2} >
-                        <Link to={'nuevo'}> <ButonVerde> Nuevo Producto </ButonVerde> </Link>
-                        <ButonAmarillo onClick={productosEliminados}> {productoEstado ? 'Eliminados' : 'Activos'} </ButonAmarillo>
-                    </Box>
+                    {esAdministrador && (
+                        <Box component='div' display={'flex'} gap={2} >
+                            <Link to={'nuevo'}> <ButonVerde> Nuevo Producto </ButonVerde> </Link>
+                            <ButonAmarillo onClick={productosEliminados}> {productoEstado ? 'Eliminados' : 'Activos'} </ButonAmarillo>
+                        </Box>
+                    )}
                 </SectionHeader>
                 <div className="scroll">
                     {
@@ -116,6 +122,7 @@ export const ListaPage = () => {
                                 productos={p} verProducto={verProducto}
                                 productoEstado={productoEstado}
                                 eliminarProducto={eliminarProducto}
+                                esAdministrador={esAdministrador}
                             />
                         })
                     }

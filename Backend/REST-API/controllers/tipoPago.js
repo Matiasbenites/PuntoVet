@@ -2,10 +2,14 @@ const { tipoPago } = require("../models")
 
 const getTiposPagos = async (req, res) => {
     try {
-        const tipoPagos = await tipoPago.findAll();
+        const tipoPagos = await tipoPago.findAll({
+            where: { estado: true },
+            order: [['codTipoPago', 'ASC']]
+        });
         res.status(200).json(tipoPagos);
     } catch (error) {
-        res.status(401).json({ message: 'Error al obtener los metodos de pagos.', error })
+        console.error('Error al obtener tipos de pago:', error);
+        res.status(500).json({ message: 'Error al obtener los metodos de pagos.', error: error.message || error })
     }
 }
 

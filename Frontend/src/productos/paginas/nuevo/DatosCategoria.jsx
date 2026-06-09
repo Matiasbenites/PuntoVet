@@ -50,15 +50,10 @@ export const DatosCategoria = ({ useCase, nuevoProducto, setNuevoProducto, progr
         setTamaio(event.target.value);
     }
 
-    const onSubmit = async ({ codCategoria, peso, mililitro, cantidad, codTamanio }) => {
-        try {
-            await useCase.avanzarPaso({ codCategoria, peso, mililitro, cantidad, codTamanio });
-            setNuevoProducto(useCase.obtenerProducto());
-            setProgreso(useCase.getPasoActual());
-            navigate('../2');
-        } catch (error) {
-            setErrores([error.message]);
-        }
+    const onSubmit = ({ codCategoria, peso, mililitro, codTamanio }) => {
+        setNuevoProducto({ ...nuevoProducto, codCategoria, peso, mililitro, codTamanio })
+        setProgreso(progreso + 1);
+        navigate('../2')
     }
 
     return (
@@ -101,14 +96,6 @@ export const DatosCategoria = ({ useCase, nuevoProducto, setNuevoProducto, progr
                                     {...register('mililitro', validacion.mililitros)}
                                     error={!!errors.mililitros}
                                     helperText={errors.mililitros?.message} />
-                            </Grid>
-                            <Grid item xs={3}>
-                                <TextField
-                                    type='number'
-                                    label='Unidades'
-                                    {...register('cantidad', validacion.unidades)}
-                                    error={!!errors.unidades}
-                                    helperText={errors.unidades?.message} />
                             </Grid>
                             <Grid item xs={3}>
                                 <FormControl fullWidth>

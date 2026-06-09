@@ -1,6 +1,5 @@
 
 // const { producto } = useSelector (state => state.productos)
-// const { nombre, descripcion, categoria, stock, unidades, tamanio, mililitros, mascota, edad, imagen, precioContado, precioLista, precioSuelto } = producto;
 
 
 export const valoresCard = (codCategoria, codMascotas, codEdades, codTamanio) => {

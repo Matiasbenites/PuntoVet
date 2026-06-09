@@ -1,7 +1,6 @@
 // models/ProductoMascota.js
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const Producto = require('./producto');
 const Mascota = require('./mascota');
 
 const ProductoMascota = sequelize.define('producto_mascota', {
@@ -9,7 +8,7 @@ const ProductoMascota = sequelize.define('producto_mascota', {
         type: DataTypes.INTEGER,
         primaryKey: true,
         references: {
-            model: Producto,
+            model: 'producto',
             key: 'codProducto'
         }
     },
@@ -17,7 +16,7 @@ const ProductoMascota = sequelize.define('producto_mascota', {
         type: DataTypes.INTEGER,
         primaryKey: true,
         references: {
-            model: Mascota,
+            model: 'mascota',
             key: 'codMascota'
         }
     }

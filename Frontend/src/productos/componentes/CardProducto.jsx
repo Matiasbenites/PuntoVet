@@ -5,7 +5,7 @@ import { ExpandMore, ShoppingBag } from "@mui/icons-material";
 
 export const CardProducto = ({ nuevoProducto }) => {
     const {
-        nombre, descripcion, stock, peso, cantidad, mililitro, precioCompra, precioVenta, precioSuelto,
+        nombre, descripcion, stock, peso, mililitro, precioCompra, precioVenta, precioSuelto,
         codCategoria, nombreCategoria,
         codTamanio, nombreTamanio,
         nombreMascotas, codMascotas,
@@ -38,7 +38,6 @@ export const CardProducto = ({ nuevoProducto }) => {
                 <Typography> Stock: <b>{stock}</b> </Typography>
                 <Typography> Peso: <b>{peso}</b> </Typography>
                 <Typography> Tamaño: <b>{retorno[3]}</b> </Typography>
-                <Typography> Cantidad: <b>{cantidad}</b> </Typography>
                 <Typography> Mililitro: <b>{mililitro}</b> </Typography>
                 <Typography> Para: <b>{retorno[1]}</b> </Typography>
                 <Typography> Edad: <b>{retorno[2]}</b> </Typography>
