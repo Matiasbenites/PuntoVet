@@ -7,30 +7,15 @@ import { CardProducto } from "../componentes/CardProducto";
 import { getProducto } from "../../api/productos/productosApi";
 import { ContenedorFormulariosPrincipales } from "../../layout/ContenedorFormulariosPrincipales";
 import { TituloFormularioPrincipales } from "../../componentes";
+import { useCrearProducto } from "../../hook/useCrearProducto";
 
-export const NuevoProducto = ({ producto }) => {
-    const [nuevoProducto, setNuevoProducto] = useState({
-        codProducto: '',
-        nombre: '',
-        descripcion: '',
-        codCategoria: '',
-        stock: '',
-        peso: '',
-        codTamanio: '',
-        mililitro: '',
-        codMascotas: '',
-        codEdades: '',
-        precioCompra: '',
-        precioVenta: '',
-        precioSuelto: '',
-        imagen: {}
-    });
-    const [nuevoProducto, setNuevoProducto] = useState(useCase.obtenerProducto());
-    const [progreso, setProgreso] = useState(useCase.getPasoActual());
+export const NuevoProducto = () => {
+    const { useCase, producto: nuevoProducto, pasoActual: progreso } = useCrearProducto();
+    const setNuevoProducto = (datos) => useCase.actualizarProducto(datos);
+    const setProgreso = (paso) => useCase.setPasoActual(paso);
     const location = useLocation();
     const codProducto = location.state?.codProducto;
     const [loading, setLoading] = useState(true);
-
 
     useEffect(() => {
         const cargarProducto = async () => {
@@ -45,30 +30,6 @@ export const NuevoProducto = ({ producto }) => {
         cargarProducto();
     }, [codProducto, useCase]);
 
-    useEffect(() => {
-        const handleProductoActualizado = (datosProducto) => {
-            setNuevoProducto(datosProducto);
-        };
-
-        const handlePasoAvanzado = (nuevoPaso) => {
-            setProgreso(nuevoPaso);
-        };
-
-        const handlePasoRetrocedido = (nuevoPaso) => {
-            setProgreso(nuevoPaso);
-        };
-
-        useCase.suscribir('productoActualizado', handleProductoActualizado);
-        useCase.suscribir('pasoAvanzado', handlePasoAvanzado);
-        useCase.suscribir('pasoRetrocedido', handlePasoRetrocedido);
-
-        return () => {
-            useCase.desuscribir('productoActualizado', handleProductoActualizado);
-            useCase.desuscribir('pasoAvanzado', handlePasoAvanzado);
-            useCase.desuscribir('pasoRetrocedido', handlePasoRetrocedido);
-        };
-    }, [useCase]);
-
 
     if (loading) {
         return <div> Cargando wey.... </div>
@@ -81,11 +42,11 @@ export const NuevoProducto = ({ producto }) => {
             <Grid container spacing={1} sx={{ padding: '1.5rem', placeItems: 'center', minHeight: '60vh' }}>
                 <Grid item sm={8}>
                     <Routes>
-                        <Route path="" element={<DatosPrincipal useCase={useCase} nuevoProducto={nuevoProducto} progreso={progreso} setProgreso={setProgreso} />} />
-                        <Route path="1" element={<DatosCategoria useCase={useCase} nuevoProducto={nuevoProducto} progreso={progreso} setProgreso={setProgreso} />} />
-                        <Route path="2" element={<DatosMascota useCase={useCase} nuevoProducto={nuevoProducto} progreso={progreso} setProgreso={setProgreso} />} />
-                        <Route path="3" element={<DatosPrecio useCase={useCase} nuevoProducto={nuevoProducto} progreso={progreso} setProgreso={setProgreso} />} />
-                        <Route path="4" element={<FinNuevoProducto useCase={useCase} nuevoProducto={nuevoProducto} progreso={progreso} setProgreso={setProgreso} />} />
+                        <Route path="" element={<DatosPrincipal useCase={useCase} nuevoProducto={nuevoProducto} setNuevoProducto={setNuevoProducto} progreso={progreso} setProgreso={setProgreso} />} />
+                        <Route path="1" element={<DatosCategoria useCase={useCase} nuevoProducto={nuevoProducto} setNuevoProducto={setNuevoProducto} progreso={progreso} setProgreso={setProgreso} />} />
+                        <Route path="2" element={<DatosMascota useCase={useCase} nuevoProducto={nuevoProducto} setNuevoProducto={setNuevoProducto} progreso={progreso} setProgreso={setProgreso} />} />
+                        <Route path="3" element={<DatosPrecio useCase={useCase} nuevoProducto={nuevoProducto} setNuevoProducto={setNuevoProducto} progreso={progreso} setProgreso={setProgreso} />} />
+                        <Route path="4" element={<FinNuevoProducto useCase={useCase} nuevoProducto={nuevoProducto} setNuevoProducto={setNuevoProducto} progreso={progreso} setProgreso={setProgreso} />} />
                     </Routes>
                 </Grid>
                 <Grid item sm={4}>
