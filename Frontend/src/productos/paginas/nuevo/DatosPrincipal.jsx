@@ -1,7 +1,7 @@
 import { Box, Button, Grid, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { validacion } from "../../../componetes/validaciones";
+import { validacion } from "../../../componentes/validaciones";
 
 export const DatosPrincipal = ({ nuevoProducto, setNuevoProducto, progreso, setProgreso }) => {
 

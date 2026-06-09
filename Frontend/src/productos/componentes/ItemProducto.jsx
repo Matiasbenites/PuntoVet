@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 // import { deleteProducto } from "../../api/productos/productosApi";
 
 
-export const ItemProducto = ({ productos, verProducto, productoEstado, eliminarProducto }) => {
+export const ItemProducto = ({ productos, verProducto, productoEstado, eliminarProducto, esAdministrador }) => {
     const { codProducto, nombre, stock, precioVenta, precioSuelto, nombreMascotas, nombreEdades } = productos;
 
     const handleEliminarProducto = async () => {
@@ -30,16 +30,18 @@ export const ItemProducto = ({ productos, verProducto, productoEstado, eliminarP
                 <p>Suelto</p>
                 <span> $ {precioSuelto} </span>
             </div>
-            <div> {/* tacho basurero */}
-                <Link
-                    to={'/productos/nuevo'} state={{ codProducto: codProducto }}
-                >
-                    <Button><ModeEdit color="" /></Button>
-                </Link>
-            </div>
-            <div> {/* lapiz */}
-                <Button onClick={handleEliminarProducto}><DeleteForever sx={{ color: productoEstado ? 'red' : 'green' }} /> </Button>
-            </div>
+            {esAdministrador && (
+                <>
+                    <div>
+                        <Link to={'/productos/nuevo'} state={{ codProducto: codProducto }}>
+                            <Button><ModeEdit color="" /></Button>
+                        </Link>
+                    </div>
+                    <div>
+                        <Button onClick={handleEliminarProducto}><DeleteForever sx={{ color: productoEstado ? 'red' : 'green' }} /></Button>
+                    </div>
+                </>
+            )}
 
         </div >
     );

@@ -2,7 +2,7 @@ import { Box, Button, FormControl, FormHelperText, Grid, InputLabel, MenuItem, T
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { validacion } from "../../../componetes/validaciones";
+import { validacion } from "../../../componentes/validaciones";
 
 
 export const DatosCategoria = ({ nuevoProducto, setNuevoProducto, progreso, setProgreso }) => {
@@ -31,8 +31,8 @@ export const DatosCategoria = ({ nuevoProducto, setNuevoProducto, progreso, setP
         setTamaio(event.target.value);
     }
 
-    const onSubmit = ({ codCategoria, peso, mililitro, cantidad, codTamanio }) => {
-        setNuevoProducto({ ...nuevoProducto, codCategoria, peso, mililitro, cantidad, codTamanio })
+    const onSubmit = ({ codCategoria, peso, mililitro, codTamanio }) => {
+        setNuevoProducto({ ...nuevoProducto, codCategoria, peso, mililitro, codTamanio })
         setProgreso(progreso + 1);
         navigate('../2')
     }
@@ -77,14 +77,6 @@ export const DatosCategoria = ({ nuevoProducto, setNuevoProducto, progreso, setP
                                     {...register('mililitro', validacion.mililitros)}
                                     error={!!errors.mililitros}
                                     helperText={errors.mililitros?.message} />
-                            </Grid>
-                            <Grid item xs={3}>
-                                <TextField
-                                    type='number'
-                                    label='Unidades'
-                                    {...register('cantidad', validacion.unidades)}
-                                    error={!!errors.unidades}
-                                    helperText={errors.unidades?.message} />
                             </Grid>
                             <Grid item xs={3}>
                                 <FormControl fullWidth>

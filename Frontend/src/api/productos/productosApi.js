@@ -40,8 +40,8 @@ const setImagen = async (dataImage) => {
     const formData = new FormData();
     formData.append('imagen', dataImage)
     try {
-        const responce = await productosApi.post('/storage', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-        return responce;
+        const response = await productosApi.post('/storage', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        return response.data;
     } catch (error) {
         return { message: `Error al cargar la imagen: ${error}` }
     }
@@ -54,8 +54,8 @@ export const setProducto = async (nuevoProducto) => {
         const { data } = await setImagen(datosImagen);
         console.log('enlace de imagen: ', data);
         nuevoProducto.imagen = data;
-        const responce = await productosApi.post('/productos', nuevoProducto);
-        return responce.data.message;
+        const response = await productosApi.post('/productos', nuevoProducto);
+        return response.data.message;
     } catch (error) {
         return error
     }
@@ -68,8 +68,8 @@ export const updateProducto = async (nuevoProducto) => {
         console.log('enlace de imagen: ', data);
         nuevoProducto.imagen = data;
 
-        const responce = await productosApi.put(`/productos/${nuevoProducto.codProducto}`, nuevoProducto)
-        return responce.data.message;
+        const response = await productosApi.put(`/productos/${nuevoProducto.codProducto}`, nuevoProducto)
+        return response.data.message;
     } catch (error) {
         return { message: `Error al actualizar el producto ${nuevoProducto.codProducto}`, error }
     }
@@ -77,8 +77,8 @@ export const updateProducto = async (nuevoProducto) => {
 
 export const deleteProducto = async (codProducto) => {
     try {
-        const responce = await productosApi.delete(`/productos/${codProducto}`)
-        return responce.data
+        const response = await productosApi.delete(`/productos/${codProducto}`)
+        return response.data
     } catch (error) {
         return { message: 'Ocurrio un error al eliminar el producto', error }
     }

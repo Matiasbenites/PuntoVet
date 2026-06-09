@@ -7,7 +7,7 @@ import { useTheme } from "@emotion/react";
 import { CardProducto } from "../componentes/CardProducto";
 import { getProducto } from "../../api/productos/productosApi";
 import { ContenedorFormulariosPrincipales } from "../../layout/ContenedorFormulariosPrincipales";
-import { TituloFormularioPrincipales } from "../../componetes";
+import { TituloFormularioPrincipales } from "../../componentes";
 
 export const NuevoProducto = ({ producto }) => {
     const [nuevoProducto, setNuevoProducto] = useState({
@@ -17,7 +17,6 @@ export const NuevoProducto = ({ producto }) => {
         codCategoria: '',
         stock: '',
         peso: '',
-        cantidad: '',
         codTamanio: '',
         mililitro: '',
         codMascotas: '',

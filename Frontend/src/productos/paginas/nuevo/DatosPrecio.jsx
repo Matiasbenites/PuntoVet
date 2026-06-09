@@ -2,7 +2,7 @@ import { Box, Button, Grid, MenuItem, Select, TextField } from "@mui/material"
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { validacion } from "../../../componetes/validaciones";
+import { validacion } from "../../../componentes/validaciones";
 import { setProducto, updateProducto } from "../../../api/productos/productosApi";
 
 
