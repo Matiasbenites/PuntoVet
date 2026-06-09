@@ -4,6 +4,9 @@ import { NuevoProducto } from "../productos/paginas/NuevoProducto";
 import { RoleRoute } from "./RoleRoute";
 import { ROLES } from "./roles";
 
+// Router que maneja las rutas relacionadas con productos.
+// Define dos rutas: lista de productos y formulario para crear/editar.
+// Es parte del sistema privado, solo accesibles después del login.
 
 export const ProductosRouter = () => {
     return (

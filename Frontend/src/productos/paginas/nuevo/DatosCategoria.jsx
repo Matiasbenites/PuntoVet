@@ -4,8 +4,10 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { validacion } from "../../../componentes/validaciones";
 
-
-export const DatosCategoria = ({ nuevoProducto, setNuevoProducto, progreso, setProgreso }) => {
+export const DatosCategoria = ({ useCase, nuevoProducto, setNuevoProducto, progreso, setProgreso }) => {
+    // Segundo paso del formulario para seleccionar categoría, peso, medidas y tamaño.
+    // Se valida que la categoría esté seleccionada y los campos numéricos sean válidos.
+    // Al finalizar, se guarda la información y se avanza al siguiente paso.
 
     const navigate = useNavigate();
 
@@ -19,9 +21,26 @@ export const DatosCategoria = ({ nuevoProducto, setNuevoProducto, progreso, setP
     const { codCategoria: codCategoriaEstado } = nuevoProducto;
 
     const [codCategoria, setcodCategoria] = useState(codCategoriaEstado);
-    const [codTamanio, setTamaio] = useState('');
+    const [codTamanio, setTamaio] = useState(nuevoProducto.codTamanio ?? '');
+    const [categorias, setCategorias] = useState([]);
+    const [tamanios, setTamanios] = useState([]);
+    const [errores, setErrores] = useState([]);
 
-    const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: nuevoProducto });
+    const { register, handleSubmit, formState: { errors }, reset } = useForm({ defaultValues: nuevoProducto });
+
+    useEffect(() => {
+        reset(nuevoProducto);
+    }, [nuevoProducto, reset]);
+
+    useEffect(() => {
+        const cargarCatalogo = async () => {
+            const { categorias: categoriasData, tamanios: tamaniosData } = await useCase.obtenerOpcionesFormularioProducto();
+            setCategorias(categoriasData);
+            setTamanios(tamaniosData);
+        };
+
+        cargarCatalogo();
+    }, [useCase]);
 
     const handleChangecodCategoria = (event) => {
         setcodCategoria(event.target.value);
@@ -53,11 +72,11 @@ export const DatosCategoria = ({ nuevoProducto, setNuevoProducto, progreso, setP
                                     onChange={handleChangecodCategoria}
                                     error={!!errors.categoria}
                                 >
-                                    <MenuItem value={1}>Balanceados</MenuItem>
-                                    <MenuItem value={2}>Juguetes</MenuItem>
-                                    <MenuItem value={3}>Medicamentos</MenuItem>
-                                    <MenuItem value={4}>Accesorios</MenuItem>
-                                    <MenuItem value={5}>Otros</MenuItem>
+                                    {categorias.map((categoria) => (
+                                        <MenuItem key={categoria.codCategoria} value={categoria.codCategoria}>
+                                            {categoria.nombreCategoria}
+                                        </MenuItem>
+                                    ))}
                                 </Select>
                                 {errors.codCategoria && <FormHelperText sx={{ color: 'red' }}> {errors.codCategoria?.message} </FormHelperText>}
                             </FormControl>
@@ -90,15 +109,22 @@ export const DatosCategoria = ({ nuevoProducto, setNuevoProducto, progreso, setP
                                         onChange={handleChangecodTamanio}
                                         error={!!errors.tamanio}
                                     >
-                                        <MenuItem value={3}>Grande</MenuItem>
-                                        <MenuItem value={2}>Mediano</MenuItem>
-                                        <MenuItem value={1}>Chico</MenuItem>
+                                        {tamanios.map((tamanio) => (
+                                            <MenuItem key={tamanio.codTamanio} value={tamanio.codTamanio}>
+                                                {tamanio.nombreTamanio}
+                                            </MenuItem>
+                                        ))}
                                     </Select>
                                     {errors.codTamanio && <FormHelperText> {errors.codTamanio?.message} </FormHelperText>}
                                 </FormControl>
                             </Grid>
                         </Grid>
                     </Grid>
+                    {errores.length > 0 && (
+                        <FormHelperText error sx={{ marginTop: '1rem', display: 'block' }}>
+                            {errores.join(', ')}
+                        </FormHelperText>
+                    )}
                     <Box component={'div'} sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
                         <Button onClick={() => navigate('../')} variant="contained"> Atras </Button>
                         <Button type="submit" variant="contained"> Siguiente </Button>

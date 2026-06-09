@@ -3,6 +3,9 @@ import { Box, Card, CardMedia, Grid, Modal, Typography } from "@mui/material";
 import { CardProducto } from "./CardProducto";
 
 export const ProductoModal = ({ producto, open, setOpen }) => {
+    // Modal que muestra los detalles completos de un producto cuando se hace clic en él.
+    // Exhibe la imagen del producto en un lado y todos los detalles en el otro.
+    // Se abre cuando el usuario hace clic en un producto de la lista.
     const theme = useTheme();
     const { root } = theme;
 

@@ -32,6 +32,8 @@ export const ListaPage = () => {
     }
 
     const productosEliminados = () => {
+        // Alterna entre productos activos y eliminados.
+        // Al cambiar el estado, limpia la lista y reinicia la paginación.
         const nuevoEstado = !productoEstado;
         setProductoEstado(nuevoEstado);
         setProductos([]);
@@ -86,6 +88,8 @@ export const ListaPage = () => {
     }
 
     const eliminarProducto = async (codProducto) => {
+        // Aquí se ejecuta el flujo de eliminar producto desde la UI.
+        // Llama a la API para cambiar el estado y luego actualiza la lista local.
         try {
             const { message } = await deleteProducto(codProducto);
             console.log(message);

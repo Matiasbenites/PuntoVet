@@ -1,7 +1,3 @@
-
-
-
-
 const { matchedData } = require('express-validator');
 const { producto, categoria, tamanio } = require('../models/index');
 const manejadorErrores = require('../utils/manejadorErrores');
@@ -16,6 +12,8 @@ const { where, Op } = require('sequelize');
 // Retorna productos paginados, filtrables por estado (activo/inactivo) y búsqueda por nombre o código.
 const getProductos = async (req, res) => {
     try {
+        // Devuelve una lista de productos según página, límite, estado y búsqueda.
+        // Este método es el que usa la lista de productos en la UI para paginación.
         const { pagina, limite, v_estado, busqueda } = req.query;
         const estado = v_estado === 'true' ? true : false;
         const offset = (parseInt(pagina) - 1) * limite;
@@ -37,6 +35,8 @@ const getProductos = async (req, res) => {
 // Retorna un producto completo con sus relaciones (edades, mascotas) para precargar el formulario de edición.
 const getProducto = async (req, res) => {
     try {
+        // Busca un solo producto por su código.
+        // Útil cuando se necesita cargar los datos previos para editar.
         const { id } = req.params;
         console.log('codProducto: ', id);
         const data = await Producto.findProductData({
@@ -54,6 +54,10 @@ const getProducto = async (req, res) => {
 // Post: producto persistido con pesoTotal = peso × stock; relaciones de edad y mascota creadas.
 const setProductos = async (req, res) => {
     try {
+        // Este método crea un nuevo producto cuando el formulario envía datos.
+        // Se recibe el body de la petición, se calcula el peso total y se almacena
+        // el registro principal del producto junto con sus edades y mascotas.
+        // Devuelve un mensaje de éxito cuando todo se guarda correctamente.
         //Implementar cuando tenga todas las validaciones 
         //const body = matchedData(req);
         const { body, file } = req;
@@ -86,6 +90,10 @@ const setProductos = async (req, res) => {
 // Borra y recrea las relaciones edad/mascota para reflejar los cambios del formulario.
 const updateProducto = async (req, res) => {
     try {
+        // Este método actualiza un producto existente.
+        // Recibe el id del producto, recalcula datos como peso total,
+        // borra las relaciones viejas de edades y mascotas y luego vuelve a guardarlas.
+        // Al final actualiza el producto y devuelve un mensaje de confirmación.
         const { id } = req.params;
         const { body } = req;
 
@@ -117,6 +125,9 @@ const updateProducto = async (req, res) => {
 //                       eliminado→activo ("Producto restaurado correctamente")
 const deleteProducto = async (req, res) => {
     try {
+        // Este método no borra el producto físicamente.
+        // Cambia el campo estado para marcarlo como eliminado o restaurado.
+        // Devuelve un mensaje diferente según si se apagó o se reactivó el producto.
         const { id } = req.params;
         console.log('Producto a eliminar: ', id);
         const { estado, ...data } = await producto.findByPk(id);

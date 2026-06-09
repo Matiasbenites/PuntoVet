@@ -4,40 +4,58 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { validacion } from "../../../componentes/validaciones";
 
-
-
-export const DatosMascota = ({ nuevoProducto, setNuevoProducto, progreso, setProgreso }) => {
+export const DatosMascota = ({ useCase, nuevoProducto, setNuevoProducto, progreso, setProgreso }) => {
+    // Tercer paso: selección de mascotas y edades.
+    // Se muestran checkboxes para que el administrador elija a qué mascotas y edades aplica este producto.
+    // Los códigos seleccionados se guardan en arrays para asociarlos al producto.
     const navigate = useNavigate();
     const [codMascotas, setcodMascotas] = useState(nuevoProducto.codMascotas ? nuevoProducto.codMascotas.map(String) : []);
     const [codEdades, setcodEdades] = useState(nuevoProducto.codEdades ? nuevoProducto.codEdades.map(String) : []);
-    const { handleSubmit, register, formState: { errors } } = useForm({ defaultValues: nuevoProducto });
+    const [mascotas, setMascotas] = useState([]);
+    const [edades, setEdades] = useState([]);
+    const [errores, setErrores] = useState([]);
+    const { handleSubmit, register, formState: { errors }, reset } = useForm({ defaultValues: nuevoProducto });
 
+    useEffect(() => {
+        reset(nuevoProducto);
+    }, [nuevoProducto, reset]);
 
     useEffect(() => {
         if (progreso < 1) {
-            console.log(progreso);
             navigate('/productos');
         }
-    }, [progreso, navigate]);
 
-    const onSubmit = ({ imagen }) => {
+        const cargarOpciones = async () => {
+            const { mascotas: mascotasData, edades: edadesData } = await useCase.obtenerOpcionesFormularioProducto();
+            setMascotas(mascotasData);
+            setEdades(edadesData);
+        };
+
+        cargarOpciones();
+    }, [progreso, navigate, useCase]);
+
+    const onSubmit = async ({ imagen }) => {
         if (codMascotas.length === 0 || codEdades.length === 0) {
-            alert('Por favor seleccione una codMascotas y el rango de codEdades')
+            setErrores(['Por favor seleccione mascotas y edades']);
             return;
         }
 
-        const datosImagen = imagen[0]
+        const datosImagen = imagen?.[0];
 
-        setNuevoProducto({ ...nuevoProducto, codMascotas, codEdades, imagen: datosImagen })
-        console.log(imagen);
-        setProgreso(progreso + 1);
-        navigate('../3');
+        try {
+            await useCase.avanzarPaso({ codMascotas, codEdades, imagen: datosImagen });
+            setNuevoProducto(useCase.obtenerProducto());
+            setProgreso(useCase.getPasoActual());
+            navigate('../3');
+        } catch (error) {
+            setErrores([error.message]);
+        }
     }
 
     const handlecodEdades = (event) => {
         const value = event.target.value.toString();
         if (codEdades.includes(value)) {
-            setcodEdades(codEdades.filter((item) => item != value));
+            setcodEdades(codEdades.filter((item) => item !== value));
         } else {
             setcodEdades([...codEdades, value]);
         }
@@ -69,22 +87,38 @@ export const DatosMascota = ({ nuevoProducto, setNuevoProducto, progreso, setPro
                                 display: 'flex',
                                 flexDirection: 'row'
                             }} >
-                            <FormControlLabel control={<Checkbox checked={codMascotas.includes('1')} onChange={handlecodMascotas} value={'1'} />} label="Perro" />
-                            <FormControlLabel control={<Checkbox checked={codMascotas.includes('2')} onChange={handlecodMascotas} value={'2'} />} label="Gato" />
-                            <FormControlLabel control={<Checkbox checked={codMascotas.includes('3')} onChange={handlecodMascotas} value={'3'} />} label="Ave" />
-                            <FormControlLabel control={<Checkbox checked={codMascotas.includes('4')} onChange={handlecodMascotas} value={'4'} />} label="Otros" />
+                            {mascotas.map((mascota) => (
+                                <FormControlLabel
+                                    key={mascota.codMascota}
+                                    control={
+                                        <Checkbox
+                                            checked={codMascotas.includes(String(mascota.codMascota))}
+                                            onChange={handlecodMascotas}
+                                            value={String(mascota.codMascota)}
+                                        />
+                                    }
+                                    label={mascota.nombreMascota}
+                                />
+                            ))}
                         </FormGroup>
                     </Grid>
                     <Grid item>
                         <Typography variant="h7" gutterBottom>Edades </Typography>
                         <FormGroup
                             sx={{ display: 'flex', flexDirection: 'row' }}>
-                            <FormControlLabel control={<Checkbox checked={codEdades.includes('1')} onChange={handlecodEdades} value={'1'} />} label="Cachorro" />
-                            <FormControlLabel control={<Checkbox checked={codEdades.includes('2')} onChange={handlecodEdades} value={'2'} />} label="Castrado" />
-                            <FormControlLabel control={<Checkbox checked={codEdades.includes('3')} onChange={handlecodEdades} value={'3'} />} label="Joven" />
-                            <FormControlLabel control={<Checkbox checked={codEdades.includes('4')} onChange={handlecodEdades} value={'4'} />} label="Adulto" />
-                            <FormControlLabel control={<Checkbox checked={codEdades.includes('5')} onChange={handlecodEdades} value={'5'} />} label="Mayor" />
-                            <FormControlLabel control={<Checkbox checked={codEdades.includes('6')} onChange={handlecodEdades} value={'6'} />} label="Urinario" />
+                            {edades.map((edad) => (
+                                <FormControlLabel
+                                    key={edad.codEdad}
+                                    control={
+                                        <Checkbox
+                                            checked={codEdades.includes(String(edad.codEdad))}
+                                            onChange={handlecodEdades}
+                                            value={String(edad.codEdad)}
+                                        />
+                                    }
+                                    label={edad.nombreEdad}
+                                />
+                            ))}
                         </FormGroup>
                     </Grid>
                     <Grid item>
@@ -108,7 +142,11 @@ export const DatosMascota = ({ nuevoProducto, setNuevoProducto, progreso, setPro
                         /> */}
                     </Grid>
                 </Grid>
-
+                {errores.length > 0 && (
+                    <FormHelperText error sx={{ marginTop: '1rem', display: 'block' }}>
+                        {errores.join(', ')}
+                    </FormHelperText>
+                )}
                 <Box component={'div'} sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
                     <Button onClick={() => navigate('../1')} variant="contained"> Atras </Button>
                     <Button type="submit" variant="contained"> Siguiente </Button>
