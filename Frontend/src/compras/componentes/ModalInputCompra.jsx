@@ -1,7 +1,7 @@
 import { Box, Grid, Modal, TextField, Typography } from "@mui/material"
 import { useEffect, useState } from "react";
 import { comprobarNumero } from "../../hook/useValidacionInput";
-import { ButonVerde } from "../../componetes/Botones";
+import { ButonVerde } from "../../componentes/Botones";
 
 const style = {
     position: 'absolute',

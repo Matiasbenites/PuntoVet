@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom"
 import { useCarrito, useProductos, useSeleccionarOpcionPago } from "../../ventas/hooks";
 import { useState } from "react";
-import { LoadingPage } from "../../componetes/animaciones/LoadingPage";
-import { BuscadorProductos, ButonVerde, SectionHeader } from "../../componetes";
+import { LoadingPage } from "../../componentes/animaciones/LoadingPage";
+import { BuscadorProductos, ButonVerde, SectionHeader } from "../../componentes";
 import { BuscadorProductosDesplegable } from "../../ventas/componentes/BuscadorProductoDespegable";
 import { ComponenteCarrito } from "../../ventas/componentes/Carrito";
 import { ModalInputCompra } from "../componentes/ModalInputCompra";
@@ -27,21 +27,39 @@ export const CompraPage = () => {
     const showLoadingPageFuction = () => setShowLoadingPage(true);
 
     const finalizarCompra = async () => {
+        if (!codUsuario) {
+            alert('No se encontro un usuario activo para registrar la compra.');
+            return;
+        }
+
+        if (carrito.length === 0) {
+            alert('Debe agregar al menos un producto al carrito.');
+            return;
+        }
+
         showLoadingPageFuction();
         const detalleCompra = carrito.map((item) => ({
             codProducto: item.codProducto,
-            cantidad: item.cantidad,
+            cantidad: Number(item.cantidad),
             precioCompra: item.precioCompra,
             precioVenta: item.precioVenta,
             precioSuelto: item.precioSuelto
         }));
         const compra = {
-            codUsuario,
+            codUsuario: Number(codUsuario),
             detalleCompra
         }
-        const { data } = await setCompra(compra);
-        const { codCompraCreada } = data
-        navigate(`/compras/detalle/${codCompraCreada}`)
+
+        try {
+            const data = await setCompra(compra);
+            const { codCompraCreada } = data
+            navigate(`/compras/detalle/${codCompraCreada}`)
+        } catch (error) {
+            console.error('Error al registrar compra:', error);
+            setShowLoadingPage(false);
+            const detalle = error.error || error.message || 'No se pudo registrar la compra.';
+            alert(detalle);
+        }
     }
 
     return (
@@ -62,6 +80,7 @@ export const CompraPage = () => {
                 finalizarCompra={finalizarCompra}
                 opcionPago={opcionPago}
                 onQuitarProductoCarrito={onQuitarProductoCarrito}
+                textoBoton="Finalizar Compra"
             />
             {
                 productoSeleccionado &&
