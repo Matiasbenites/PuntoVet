@@ -8,25 +8,17 @@
 //
 //   Nota CP2-CP3: "Es requerido" e "Ingrese un número válido" son
 //   mensajes del frontend. El backend verifica que maneja el error
-//   cuando la BD rechaza los datos.
+//   cuando el SP rechaza los datos.
 // ============================================================
 
-jest.mock('../models', () => ({
-    producto: { update: jest.fn() },
-    categoria: {},
-    tamanio: {}
+jest.mock('../config/database', () => ({
+    sequelize: { query: jest.fn() }
 }));
 jest.mock('../models/producto', () => ({}));
-jest.mock('../models/categoria', () => ({}));
-jest.mock('../models/tamanio', () => ({}));
-jest.mock('../models/productoEdad', () => ({ create: jest.fn(), destroy: jest.fn() }));
-jest.mock('../models/productoMascota', () => ({ create: jest.fn(), destroy: jest.fn() }));
 jest.mock('../utils/manejadorErrores', () => jest.fn());
 
 const { updateProducto } = require('../controllers/productos');
-const { producto } = require('../models');
-const ProductoEdad = require('../models/productoEdad');
-const ProductoMascota = require('../models/productoMascota');
+const { sequelize } = require('../config/database');
 const manejadorErrores = require('../utils/manejadorErrores');
 
 const mockRes = () => {
@@ -43,14 +35,10 @@ describe('updateProducto', () => {
         jest.clearAllMocks();
     });
 
-    // CP1 – Datos correctos → "Datos modificado correctamente"
+    // CP1 – Datos correctos → "Datos modificados correctamente"
     // Contrato Tabla 23, Post: atributos actualizados, mensaje de confirmación
     it('CP1: actualiza producto con datos correctos y retorna mensaje de éxito', async () => {
-        producto.update.mockResolvedValue([1]);
-        ProductoEdad.destroy.mockResolvedValue(1);
-        ProductoMascota.destroy.mockResolvedValue(1);
-        ProductoEdad.create.mockResolvedValue({});
-        ProductoMascota.create.mockResolvedValue({});
+        sequelize.query.mockResolvedValue([]);
 
         const req = {
             params: { id: 1 },
@@ -75,18 +63,20 @@ describe('updateProducto', () => {
 
         await updateProducto(req, res);
 
-        expect(producto.update).toHaveBeenCalledTimes(1);
-        expect(ProductoEdad.destroy).toHaveBeenCalledWith({ where: { codProducto: 1 } });
-        expect(ProductoMascota.destroy).toHaveBeenCalledWith({ where: { codProducto: 1 } });
-        expect(res.send).toHaveBeenCalledWith({ message: 'Datos modificado correctamente' });
+        expect(sequelize.query).toHaveBeenCalledTimes(1);
+        expect(sequelize.query).toHaveBeenCalledWith(
+            'CALL ModificarProducto(:json)',
+            expect.objectContaining({ replacements: expect.objectContaining({ json: expect.any(String) }) })
+        );
+        expect(res.send).toHaveBeenCalledWith({ message: 'Datos modificados correctamente' });
     });
 
     // CP2 – Campos obligatorios vacíos → error manejado por el backend
-    // El frontend muestra "Es requerido"; la BD rechaza la operación
+    // El frontend muestra "Es requerido"; el SP rechaza la operación
     it('CP2: maneja el error cuando los campos obligatorios están vacíos', async () => {
-        ProductoEdad.destroy.mockResolvedValue(1);
-        ProductoMascota.destroy.mockResolvedValue(1);
-        producto.update.mockRejectedValue(new Error('notNull Violation: producto.nombre cannot be null'));
+        sequelize.query.mockRejectedValue(
+            new Error('PROCEDURE ModificarProducto: Field nombre cannot be null')
+        );
 
         const req = {
             params: { id: 1 },
@@ -106,15 +96,15 @@ describe('updateProducto', () => {
         await updateProducto(req, res);
 
         expect(manejadorErrores).toHaveBeenCalled();
-        expect(res.send).not.toHaveBeenCalledWith({ message: 'Datos modificado correctamente' });
+        expect(res.send).not.toHaveBeenCalledWith({ message: 'Datos modificados correctamente' });
     });
 
     // CP3 – Datos incorrectos (cantidad negativa) → error manejado por el backend
-    // El frontend muestra "Ingrese un número válido"; la BD rechaza la operación
+    // El frontend muestra "Ingrese un número válido"; el SP rechaza la operación
     it('CP3: maneja el error cuando los datos ingresados son incorrectos', async () => {
-        ProductoEdad.destroy.mockResolvedValue(1);
-        ProductoMascota.destroy.mockResolvedValue(1);
-        producto.update.mockRejectedValue(new Error('Validation error: cantidad must be non-negative'));
+        sequelize.query.mockRejectedValue(
+            new Error('PROCEDURE ModificarProducto: Validation error: cantidad must be non-negative')
+        );
 
         const req = {
             params: { id: 1 },
@@ -134,7 +124,7 @@ describe('updateProducto', () => {
         await updateProducto(req, res);
 
         expect(manejadorErrores).toHaveBeenCalled();
-        expect(res.send).not.toHaveBeenCalledWith({ message: 'Datos modificado correctamente' });
+        expect(res.send).not.toHaveBeenCalledWith({ message: 'Datos modificados correctamente' });
     });
 
 });

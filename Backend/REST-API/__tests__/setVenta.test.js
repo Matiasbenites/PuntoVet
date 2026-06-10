@@ -51,9 +51,7 @@ describe('setVenta', () => {
     // CP1 – Venta con múltiples productos y tipo de pago válido
     // Tabla 33 CP1: Purina Cat Chow 10kg + Dog Selection 3 bolsas, tipoPago: Tarjeta
     // Contrato Tabla 27, Post: venta persistida, stock decrementado, mensaje de éxito
-    // Nota: el código retorna "Venta registrada correctamente" (equivalente funcional
-    //       a "Venta realizada con éxito" del plan de prueba)
-    it('CP1: registra venta con múltiples productos y retorna "Venta registrada correctamente"', async () => {
+    it('CP1: registra venta con múltiples productos y retorna "Venta realizada con éxito"', async () => {
         obtenerRecargo.mockResolvedValue(1.1); // tarjeta, 10% recargo
 
         obtenerProducto
@@ -102,7 +100,7 @@ describe('setVenta', () => {
 
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith(
-            expect.objectContaining({ message: 'Venta registrada correctamente' })
+            expect.objectContaining({ message: 'Venta realizada con éxito' })
         );
         expect(mockTransaction.commit).toHaveBeenCalled();
         expect(actualizarStock).toHaveBeenCalledTimes(2);
