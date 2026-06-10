@@ -42,7 +42,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `BuscarProductos` (IN `param` VARCHA
 		SET v_estado = 1;
     END IF;
 
-    SELECT p.codProducto, p.nombre, p.descripcion, p.peso, p.mililitro, p.cantidad, p.estado, p.imagen, p.stock, p.precioContado, p.precioLista, p.precioSuelto,
+    SELECT p.codProducto, p.nombre, p.descripcion, p.peso, p.mililitro, p.estado, p.imagen, p.stock, p.precioVenta, p.precioCompra, p.precioSuelto, p.pesoTotal,
        c.nombreCategoria, 
        GROUP_CONCAT(distinct e.nombreEdad SEPARATOR ' - ') AS edades,
        GROUP_CONCAT(distinct m.nombreMascota SEPARATOR ' - ') AS mascotas,
@@ -96,7 +96,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertarProducto` (IN `productoJSON
     END IF;
 
     -- Insertar el producto con los valores proporcionados
-    INSERT INTO producto(codCategoria, codTamanio, nombre, descripcion, peso, mililitro, cantidad, stock, precioContado, precioLista, precioSuelto)
+    INSERT INTO producto(codCategoria, codTamanio, nombre, descripcion, peso, mililitro, stock, precioVenta, precioCompra, precioSuelto, pesoTotal)
     VALUES (
         cod_categoria,
         IF(JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.codTamanio')) = '', NULL, JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.codTamanio'))),
@@ -104,11 +104,11 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertarProducto` (IN `productoJSON
         JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.descripcion')),
         IF(JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.peso')) = '', NULL, JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.peso'))),
         IF(JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.mililitro')) = '', NULL, JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.mililitro'))),
-        IF(JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.cantidad')) = '', NULL, JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.cantidad'))),
         IF(JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.stock')) = '', NULL, JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.stock'))),
-        IF(JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.precioContado')) = '', NULL, JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.precioContado'))),
-        IF(JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.precioLista')) = '', NULL, JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.precioLista'))),
-        IF(JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.precioSuelto')) = '', NULL, JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.precioSuelto')))
+        IF(JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.precioVenta')) = '', NULL, JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.precioVenta'))),
+        IF(JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.precioCompra')) = '', NULL, JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.precioCompra'))),
+        IF(JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.precioSuelto')) = '', NULL, JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.precioSuelto'))),
+        IF(JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.pesoTotal')) = '', NULL, JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.pesoTotal')))
     );
     
     -- Obtener el ID del producto recién insertado
@@ -205,12 +205,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `ModificarProducto` (IN `productoJSO
         descripcion = JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.descripcion')),
         peso = IF(JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.peso')) = '', NULL, JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.peso'))),
         mililitro = IF(JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.mililitro')) = '', NULL, JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.mililitro'))),
-        cantidad = IF(JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.cantidad')) = '', NULL, JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.cantidad'))),
         imagen = IF(JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.imagen')) = '', NULL, JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.imagen'))),
         stock = JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.stock')),
-        precioContado = JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.precioContado')),
-        precioLista = JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.precioLista')),
-        precioSuelto = JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.precioSuelto'))
+        precioVenta = JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.precioVenta')),
+        precioCompra = JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.precioCompra')),
+        precioSuelto = JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.precioSuelto')),
+        pesoTotal = JSON_UNQUOTE(JSON_EXTRACT(productoJSON, '$.pesoTotal'))
     WHERE codProducto = cod_producto;
 
     -- Borrar las relaciones existentes en las tablas producto_edad y producto_mascota
