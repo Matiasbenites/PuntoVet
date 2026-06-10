@@ -4,13 +4,13 @@ const { venta, ventaDetalle } = require("../models");
 const Venta = require("../models/venta");
 const actualizarStock = require("../utils/actualizarStockVenta");
 const calcularPrecioUnitario = require("../utils/calculoPrecioUnitarioVenta");
-const obtenerProducto = require("../utils/obtenerProducto");
+const getProducto = require("../utils/getProducto");
 const obtenerRecargo = require("../utils/calcularRecargo");
 
 
 
 
-// CU: Realizar Venta | Tabla 33 | Fig 12 | Contrato Tabla 27
+// CU: Realizar Venta | Tabla 33 | Fig 13 | Contrato Tabla 27
 // Pre: carrito no vacío, tipo de pago seleccionado, stock suficiente por producto.
 // Post: venta persistida, stock decrementado, detalle registrado, transacción confirmada.
 // Curso alternativo: stock insuficiente → rollback → HTTP 400.
@@ -31,7 +31,7 @@ const setVenta = async (req, res) => {
             const { codProducto: idProducto, cantidad, tipoVenta } = item;
             const cantidadNormalizada = Number(cantidad);
             const tipoVentaNormalizado = Number(tipoVenta);
-            const producto = await obtenerProducto(idProducto);
+            const producto = await getProducto(idProducto);
             const { codProducto, stock, pesoTotal, peso, precioSuelto, precioVenta } = producto;
             const precioUnitario = await calcularPrecioUnitario(tipoVentaNormalizado, precioVenta, precioSuelto);
             const subTotal = Number(precioUnitario) * cantidadNormalizada;
@@ -83,7 +83,7 @@ const setVenta = async (req, res) => {
 }
 
 
-// CU: Visualizar Venta (detalle) | Tabla 34 CP2-CP4 | Fig 13 | Contrato Tabla 28
+// CU: Visualizar Venta (detalle) | Tabla 34 CP2-CP4 | Fig 16 | Contrato Tabla 28
 // Retorna cabecera + líneas de detalle de una venta. Si no existe → HTTP 400.
 const getVenta = async (req, res) => {
     const codVenta = req.params.codVenta;
@@ -95,7 +95,7 @@ const getVenta = async (req, res) => {
     }
 }
 
-// CU: Visualizar Venta (listado) | Tabla 34 CP1 | Fig 13
+// CU: Visualizar Venta (listado) | Tabla 34 CP1 | Fig 16
 // Retorna todas las ventas, con filtro opcional por rango de fechas (dd/mm/yyyy).
 const getVentas = async (req, res) => {
     const { fecha1 = null, fecha2 = null } = req.query;

@@ -1,12 +1,10 @@
 // ============================================================
-// PRUEBAS UNITARIAS – obtenerProducto
+// PRUEBAS UNITARIAS – getProducto
 // Trazabilidad:
-//   Diagrama de Secuencia Fig 12, paso 9: obtenerProducto(codProducto)
-//   Diagrama de Clases Fig 17: operación obtenerProducto en clase Producto
-//   Contrato Tabla 27 – Pre: codProducto válido y existente
-//                      Post: retorna datos del producto
-//                      Excepción: "Producto no encontrado"
-//   Casos de prueba: CP1-CP2
+//   Diagrama de Secuencia Fig 13, paso 9: getProducto(codProducto)
+//   Diagrama de Clases Fig 20: operación getProducto en clase Producto
+//   Sub-operación invocada por setVenta (Contrato Tabla 27) y setCompra
+//   CP1-CP2: helper interno; sin tabla de plan de pruebas propia
 // ============================================================
 
 // Mock del modelo para no requerir conexión a BD
@@ -16,17 +14,17 @@ jest.mock('../models', () => ({
     }
 }));
 
-const obtenerProducto = require('../utils/obtenerProducto');
+const getProducto = require('../utils/getProducto');
 const { producto } = require('../models');
 
-describe('obtenerProducto', () => {
+describe('getProducto', () => {
 
     beforeEach(() => {
         producto.findByPk.mockClear();
     });
 
     // CP1 – Producto existente: retorna dataValues del producto encontrado
-    // Contrato Tabla 27, Post: retorna los datos del producto
+    // Paso 9 Fig 13: getProducto devuelve los datos para continuar el flujo de venta
     it('CP1: retorna los datos del producto cuando el codProducto existe', async () => {
         const mockProducto = {
             dataValues: {
@@ -38,18 +36,18 @@ describe('obtenerProducto', () => {
         };
         producto.findByPk.mockResolvedValue(mockProducto);
 
-        const resultado = await obtenerProducto(1);
+        const resultado = await getProducto(1);
 
         expect(producto.findByPk).toHaveBeenCalledWith(1);
         expect(resultado).toEqual(mockProducto.dataValues);
     });
 
     // CP2 – Producto inexistente: lanza error con el código buscado
-    // Contrato Tabla 27, Excepción: "Producto no encontrado"
+    // Excepción dentro de setVenta (Contrato Tabla 27): corta el flujo antes de modificar stock
     it('CP2: lanza error cuando el producto no existe en la base de datos', async () => {
         producto.findByPk.mockResolvedValue(null);
 
-        await expect(obtenerProducto(99))
+        await expect(getProducto(99))
             .rejects.toThrow('Producto 99 no encontrado');
     });
 
