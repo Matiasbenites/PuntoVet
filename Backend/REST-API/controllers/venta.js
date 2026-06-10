@@ -73,7 +73,7 @@ const setVenta = async (req, res) => {
 
         await transaction.commit();
 
-        res.status(200).json({ message: "Venta registrada correctamente", codVentaGenerada });
+        res.status(200).json({ message: "Venta realizada con éxito", codVentaGenerada });
     } catch (error) {
         console.error('Error en setVenta:', error);
         if (transaction) await transaction.rollback();

@@ -11,22 +11,14 @@
 //   controlador maneja correctamente el error cuando la BD rechaza los datos.
 // ============================================================
 
-jest.mock('../models', () => ({
-    producto: { create: jest.fn() },
-    categoria: {},
-    tamanio: {}
+jest.mock('../config/database', () => ({
+    sequelize: { query: jest.fn() }
 }));
 jest.mock('../models/producto', () => ({}));
-jest.mock('../models/categoria', () => ({}));
-jest.mock('../models/tamanio', () => ({}));
-jest.mock('../models/productoEdad', () => ({ create: jest.fn() }));
-jest.mock('../models/productoMascota', () => ({ create: jest.fn() }));
 jest.mock('../utils/manejadorErrores', () => jest.fn());
 
 const { setProductos } = require('../controllers/productos');
-const { producto } = require('../models');
-const ProductoEdad = require('../models/productoEdad');
-const ProductoMascota = require('../models/productoMascota');
+const { sequelize } = require('../config/database');
 const manejadorErrores = require('../utils/manejadorErrores');
 
 const mockRes = () => {
@@ -44,11 +36,9 @@ describe('setProductos', () => {
     });
 
     // CP1 – Todos los campos completos y válidos
-    // Contrato Tabla 21, Post: "Producto agregado correctamente"
+    // Contrato Tabla 21, Post: "Producto agregado correctamente."
     it('CP1: registra producto con todos los campos y retorna mensaje de éxito', async () => {
-        producto.create.mockResolvedValue({ codProducto: 1 });
-        ProductoEdad.create.mockResolvedValue({});
-        ProductoMascota.create.mockResolvedValue({});
+        sequelize.query.mockResolvedValue([]);
 
         const req = {
             body: {
@@ -71,18 +61,18 @@ describe('setProductos', () => {
 
         await setProductos(req, res);
 
-        expect(producto.create).toHaveBeenCalledTimes(1);
-        expect(ProductoEdad.create).toHaveBeenCalledWith({ codProducto: 1, codEdad: 1 });
-        expect(ProductoMascota.create).toHaveBeenCalledWith({ codProducto: 1, codMascota: 1 });
+        expect(sequelize.query).toHaveBeenCalledTimes(1);
+        expect(sequelize.query).toHaveBeenCalledWith(
+            'CALL InsertarProducto(:json)',
+            expect.objectContaining({ replacements: expect.objectContaining({ json: expect.any(String) }) })
+        );
         expect(res.send).toHaveBeenCalledWith({ message: 'Producto agregado correctamente.' });
     });
 
     // CP2 – Solo campos requeridos mínimos
-    // Contrato Tabla 21, Post: "Producto agregado correctamente"
+    // Contrato Tabla 21, Post: "Producto agregado correctamente."
     it('CP2: registra producto con solo los campos requeridos y retorna mensaje de éxito', async () => {
-        producto.create.mockResolvedValue({ codProducto: 2 });
-        ProductoEdad.create.mockResolvedValue({});
-        ProductoMascota.create.mockResolvedValue({});
+        sequelize.query.mockResolvedValue([]);
 
         const req = {
             body: {
@@ -100,15 +90,15 @@ describe('setProductos', () => {
 
         await setProductos(req, res);
 
-        expect(producto.create).toHaveBeenCalledTimes(1);
+        expect(sequelize.query).toHaveBeenCalledTimes(1);
         expect(res.send).toHaveBeenCalledWith({ message: 'Producto agregado correctamente.' });
     });
 
     // CP3 – Campos obligatorios vacíos
-    // El frontend muestra "Es requerido"; el backend captura el error de la BD
+    // El frontend muestra "Es requerido"; el backend captura el error del SP
     it('CP3: maneja el error cuando los campos obligatorios están vacíos', async () => {
-        producto.create.mockRejectedValue(
-            new Error('notNull Violation: producto.nombre cannot be null')
+        sequelize.query.mockRejectedValue(
+            new Error('PROCEDURE InsertarProducto: Field nombre cannot be null')
         );
 
         const req = {
@@ -132,10 +122,10 @@ describe('setProductos', () => {
     });
 
     // CP4 – Stock con valor no numérico ("ds")
-    // El frontend muestra "Ingrese un número válido"; el backend captura el error de la BD
+    // El frontend muestra "Ingrese un número válido"; el backend captura el error del SP
     it('CP4: maneja el error cuando el stock tiene un valor no numérico', async () => {
-        producto.create.mockRejectedValue(
-            new Error('Invalid value: stock must be a number')
+        sequelize.query.mockRejectedValue(
+            new Error('PROCEDURE InsertarProducto: Invalid value for stock')
         );
 
         const req = {
