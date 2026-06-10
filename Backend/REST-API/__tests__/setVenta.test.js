@@ -2,7 +2,7 @@
 // PRUEBAS UNITARIAS – setVenta (controller)
 // Trazabilidad:
 //   Plan de Prueba Tabla 33 – Caso de uso: Realizar Venta
-//   Diagrama de Secuencia Fig 12: flujo setVenta con transacción
+//   Diagrama de Secuencia Fig 13: flujo setVenta con transacción
 //   Contrato Tabla 27 – Pre: items válidos, stock suficiente
 //                      Post: venta registrada, stock actualizado
 //   Casos de prueba: CP1, CP4
@@ -24,7 +24,7 @@ jest.mock('../models/venta', () => ({
 }));
 jest.mock('../utils/actualizarStockVenta', () => jest.fn());
 jest.mock('../utils/calculoPrecioUnitarioVenta', () => jest.fn());
-jest.mock('../utils/obtenerProducto', () => jest.fn());
+jest.mock('../utils/getProducto', () => jest.fn());
 jest.mock('../utils/calcularRecargo', () => jest.fn());
 
 const { setVenta } = require('../controllers/venta');
@@ -32,7 +32,7 @@ const { sequelize } = require('../config/database');
 const { venta, ventaDetalle } = require('../models');
 const actualizarStock = require('../utils/actualizarStockVenta');
 const calcularPrecioUnitario = require('../utils/calculoPrecioUnitarioVenta');
-const obtenerProducto = require('../utils/obtenerProducto');
+const getProducto = require('../utils/getProducto');
 const obtenerRecargo = require('../utils/calcularRecargo');
 
 let mockTransaction;
@@ -54,7 +54,7 @@ describe('setVenta', () => {
     it('CP1: registra venta con múltiples productos y retorna "Venta realizada con éxito"', async () => {
         obtenerRecargo.mockResolvedValue(1.1); // tarjeta, 10% recargo
 
-        obtenerProducto
+        getProducto
             .mockResolvedValueOnce({
                 codProducto: 1,
                 stock: 30,
@@ -113,7 +113,7 @@ describe('setVenta', () => {
     it('CP4: retorna error y hace rollback cuando el stock es insuficiente', async () => {
         obtenerRecargo.mockResolvedValue(1.0);
 
-        obtenerProducto.mockResolvedValue({
+        getProducto.mockResolvedValue({
             codProducto: 1,
             stock: 30,
             pesoTotal: 630,

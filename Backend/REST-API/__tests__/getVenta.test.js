@@ -2,7 +2,7 @@
 // PRUEBAS UNITARIAS – getVentas / getVenta (controller)
 // Trazabilidad:
 //   Plan de Prueba Tabla 34 – Caso de uso: Visualizar Venta
-//   Diagrama de Secuencia Fig 13: flujo getVenta/getVentas
+//   Diagrama de Secuencia Fig 16: flujo getVenta/getVentas
 //   Contrato Tabla 28 – Pre: usuario autenticado
 //                      Post: listado de ventas / detalle retornado
 //   Casos de prueba: CP1-CP4
@@ -20,7 +20,7 @@ jest.mock('../models/venta', () => ({
 }));
 jest.mock('../utils/actualizarStockVenta', () => jest.fn());
 jest.mock('../utils/calculoPrecioUnitarioVenta', () => jest.fn());
-jest.mock('../utils/obtenerProducto', () => jest.fn());
+jest.mock('../utils/getProducto', () => jest.fn());
 jest.mock('../utils/calcularRecargo', () => jest.fn());
 
 const { getVentas, getVenta } = require('../controllers/venta');

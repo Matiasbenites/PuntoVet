@@ -1,7 +1,7 @@
 const { where } = require("sequelize");
 const { sequelize } = require("../config/database");
 const { producto, compra, compraDetalle } = require("../models");
-const obtenerProducto = require("../utils/obtenerProducto");
+const getProducto = require("../utils/getProducto");
 const Compra = require("../models/compra");
 
 // CU: Realizar Compra | Fig (diagrama de compra)
@@ -39,7 +39,7 @@ const setCompra = async (req, res) => {
         transaction = await sequelize.transaction();
         for (const item of detalleCompra) {
             const { codProducto: idProducto, cantidad, precioCompra, precioVenta, precioSuelto } = item;
-            const producto = await obtenerProducto(idProducto);
+            const producto = await getProducto(idProducto);
             const { codProducto, stock, pesoTotal, peso } = producto;
             const subTotal = (precioCompra * cantidad)
 

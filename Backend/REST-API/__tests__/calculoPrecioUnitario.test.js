@@ -1,8 +1,8 @@
 // ============================================================
 // PRUEBAS UNITARIAS – calcularPrecioUnitario
 // Trazabilidad:
-//   Diagrama de Secuencia Fig 12, paso 14: calcularPrecioUnitario
-//   Contrato Tabla 27 – Pre: precio válido según tipo de venta
+//   Diagrama de Secuencia Fig 13, paso 14: calcularPrecioUnitario
+//   Sub-operación de setVenta (Contrato Tabla 27) – Pre: precio válido según tipo de venta
 //   Casos de prueba: CP1-CP5
 // ============================================================
 

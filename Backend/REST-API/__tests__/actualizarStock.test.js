@@ -1,9 +1,9 @@
 // ============================================================
 // PRUEBAS UNITARIAS – actualizarStock
 // Trazabilidad:
-//   Diagrama de Secuencia Fig 12, pasos 17-18: actualizarStock(codProducto, cantidad)
-//   Diagrama de Clases Fig 17: operación actualizarStock en clase Producto
-//   Contrato Tabla 27 – Pre: cantidad <= stock, Post: stock decrementado
+//   Diagrama de Secuencia Fig 13, pasos 17-18: actualizarStock(codProducto, cantidad)
+//   Diagrama de Clases Fig 20: operación actualizarStock en clase Producto
+//   Sub-operación de setVenta (Contrato Tabla 27) – Pre: cantidad <= stock, Post: stock decrementado
 //   Casos de prueba: CP1-CP6
 // ============================================================
 
@@ -59,7 +59,7 @@ describe('actualizarStock', () => {
     });
 
     // CP4 – Stock insuficiente → excepción
-    // Diagrama Secuencia Fig 13 (Curso Alternativo 1): "Stock insuficiente"
+    // Diagrama Secuencia Fig 14 (Curso Alternativo 1): "Stock insuficiente"
     it('CP4: lanza error cuando la cantidad supera el stock disponible', async () => {
         // stock=10, cantidad=15 → newStock=-5 → error
         await expect(actualizarStock(1, 3, 15, 50, 0, 10))
