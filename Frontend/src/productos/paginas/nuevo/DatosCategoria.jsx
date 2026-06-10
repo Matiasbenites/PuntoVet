@@ -28,6 +28,9 @@ export const DatosCategoria = ({ useCase, nuevoProducto, setNuevoProducto, progr
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm({ defaultValues: nuevoProducto });
 
+    const { onChange: onChangeCategoriaRHF, ...restCategoria } = register('codCategoria', validacion.categoria);
+    const { onChange: onChangeTamanioRHF, ...restTamanio } = register('codTamanio', validacion.tamanio);
+
     useEffect(() => {
         reset(nuevoProducto);
     }, [nuevoProducto, reset]);
@@ -44,10 +47,12 @@ export const DatosCategoria = ({ useCase, nuevoProducto, setNuevoProducto, progr
 
     const handleChangecodCategoria = (event) => {
         setcodCategoria(event.target.value);
+        onChangeCategoriaRHF(event);
     }
 
     const handleChangecodTamanio = (event) => {
         setTamaio(event.target.value);
+        onChangeTamanioRHF(event);
     }
 
     const onSubmit = ({ codCategoria, peso, mililitro, codTamanio }) => {
@@ -65,7 +70,7 @@ export const DatosCategoria = ({ useCase, nuevoProducto, setNuevoProducto, progr
                             <FormControl fullWidth>
                                 <InputLabel id="codCategoria">Categoria</InputLabel>
                                 <Select
-                                    {...register('codCategoria', validacion.categoria)}
+                                    {...restCategoria}
                                     labelId="codCategoria"
                                     value={codCategoria}
                                     label="Categoria"
@@ -101,7 +106,7 @@ export const DatosCategoria = ({ useCase, nuevoProducto, setNuevoProducto, progr
                                 <FormControl fullWidth>
                                     <InputLabel id="selectTamanio">Tamañio</InputLabel>
                                     <Select
-                                        {...register('codTamanio', validacion.tamanio)}
+                                        {...restTamanio}
                                         fullWidth
                                         labelId="selectTamanio"
                                         value={codTamanio}

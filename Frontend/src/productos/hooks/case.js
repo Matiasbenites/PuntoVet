@@ -18,9 +18,9 @@ export const valoresCard = (codCategoria, codMascotas, codEdades, codTamanio) =>
     }
 
     switch (codTamanio) {
-        case 1: t = 'Grande'; break;
+        case 1: t = 'Chico'; break;
         case 2: t = 'Mediano'; break;
-        case 3: t = 'Chico'; break;
+        case 3: t = 'Grande'; break;
     }
 
     if (codMascotas) {
