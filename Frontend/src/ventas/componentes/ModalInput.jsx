@@ -86,7 +86,7 @@ export const ModalInput = ({ open, handleClose, producto, opcionPago, onProducto
         setPrecio(valorPrecio);
 
         if (opcionVenta === 3 && Number(auxCantidad) > Number(stock)) {
-            setErrores('Stock insuficiente');
+            setErrores('Stock Insuficiente');
             setAuxSubTotal(0);
             setSubTotal(0);
             return;

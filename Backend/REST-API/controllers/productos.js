@@ -65,7 +65,7 @@ const updateProducto = async (req, res) => {
             'CALL ModificarProducto(:json)',
             { replacements: { json: JSON.stringify(body) }, type: QueryTypes.RAW }
         );
-        res.send({ message: 'Datos modificado correctamente' });
+        res.send({ message: 'Datos modificados correctamente' });
     } catch (e) {
         console.error('Error en updateProducto:', e);
         manejadorErrores(res, `Datos incorrecto: ${e}`);
