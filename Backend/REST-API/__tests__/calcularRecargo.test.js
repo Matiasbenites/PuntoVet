@@ -1,8 +1,8 @@
 // ============================================================
 // PRUEBAS UNITARIAS – obtenerRecargo (calcularRecargo)
 // Trazabilidad:
-//   Diagrama de Secuencia Fig 12, paso 11: obtenerRecargo(tipoPago)
-//   Contrato Tabla 27 – Pre: tipo de pago válido y activo
+//   Diagrama de Secuencia Fig 13, paso 11: obtenerRecargo(tipoPago)
+//   Sub-operación de setVenta (Contrato Tabla 27) – Pre: tipo de pago válido y activo
 //   RF#19: "cobro mediante alguno de los métodos de pago habilitados"
 //   Casos de prueba: CP1-CP3
 // ============================================================
