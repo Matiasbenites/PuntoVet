@@ -57,10 +57,10 @@ export const setProducto = async (nuevoProducto) => {
     delete productoPayload.codProducto;
 
     try {
-        const { data } = await setImagen(datosImagen);
-        console.log('enlace de imagen: ', data);
-        nuevoProducto.imagen = data;
-        const response = await productosApi.post('/productos', nuevoProducto);
+        if (productoPayload.imagen instanceof File) {
+            productoPayload.imagen = await subirImagen(productoPayload.imagen);
+        }
+        const response = await productosApi.post('/productos', productoPayload);
         return response.data.message;
     } catch (error) {
         throw new Error(error.message || 'Error al crear el producto');
