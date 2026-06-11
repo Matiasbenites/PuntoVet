@@ -6,7 +6,15 @@ import { ProductosServiceAdapter, CatalogosServiceAdapter } from '../services/Se
 /**
  * Hook de React que encapsula la lógica del useCase CrearProductoUseCase.
  * Este es el puente entre React y la lógica de negocio independiente del framework.
- * 
+ *
+ * Suscripción al patrón Observer via eventemitter3:
+ *   Antes: useCase.suscribir(evento, cb) / useCase.desuscribir(evento, cb)
+ *          llamaban a métodos implementados manualmente en el useCase.
+ *   Ahora: useCase.on(evento, cb) / useCase.off(evento, cb) son la API estándar
+ *          de EventEmitter (eventemitter3), heredada directamente por CrearProductoUseCase.
+ *          El comportamiento es el mismo; la diferencia es que la gestión de
+ *          listeners la provee la librería, no código propio.
+ *
  * Retorna:
  * - useCase: La instancia del useCase (contiene toda la lógica de negocio)
  * - producto: El estado actual del producto
@@ -18,7 +26,7 @@ export const useCrearProducto = () => {
         const validadorService = new ValidadorService();
         const productosService = new ProductosServiceAdapter();
         const catalogosService = new CatalogosServiceAdapter();
-        
+
         return new CrearProductoUseCase(productosService, catalogosService, validadorService);
     });
 
@@ -27,10 +35,9 @@ export const useCrearProducto = () => {
     const [errores, setErrores] = useState([]);
 
     useEffect(() => {
-        // Suscribirse a cambios del useCase
         const handleProductoActualizado = (datosProducto) => {
             setProducto(datosProducto);
-            setErrores([]); // Limpiar errores cuando se actualiza el producto
+            setErrores([]);
         };
 
         const handlePasoAvanzado = (nuevoPaso) => {
@@ -47,17 +54,20 @@ export const useCrearProducto = () => {
             setErrores(erroresValidacion);
         };
 
-        useCase.suscribir('productoActualizado', handleProductoActualizado);
-        useCase.suscribir('pasoAvanzado', handlePasoAvanzado);
-        useCase.suscribir('pasoRetrocedido', handlePasoRetrocedido);
-        useCase.suscribir('erroresValidacion', handleErrores);
+        // on() de eventemitter3 reemplaza el método suscribir() manual.
+        // Antes: useCase.suscribir('productoActualizado', handleProductoActualizado)
+        useCase.on('productoActualizado', handleProductoActualizado);
+        useCase.on('pasoAvanzado', handlePasoAvanzado);
+        useCase.on('pasoRetrocedido', handlePasoRetrocedido);
+        useCase.on('erroresValidacion', handleErrores);
 
-        // Cleanup
         return () => {
-            useCase.desuscribir('productoActualizado', handleProductoActualizado);
-            useCase.desuscribir('pasoAvanzado', handlePasoAvanzado);
-            useCase.desuscribir('pasoRetrocedido', handlePasoRetrocedido);
-            useCase.desuscribir('erroresValidacion', handleErrores);
+            // off() de eventemitter3 reemplaza el método desuscribir() manual.
+            // Antes: useCase.desuscribir('productoActualizado', handleProductoActualizado)
+            useCase.off('productoActualizado', handleProductoActualizado);
+            useCase.off('pasoAvanzado', handlePasoAvanzado);
+            useCase.off('pasoRetrocedido', handlePasoRetrocedido);
+            useCase.off('erroresValidacion', handleErrores);
         };
     }, [useCase]);
 

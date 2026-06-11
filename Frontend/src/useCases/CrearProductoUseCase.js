@@ -1,18 +1,31 @@
+import EventEmitter from 'eventemitter3';
 import { Producto } from "../modelos/Producto";
 
 /**
  * CU: Agregar Producto / Modificar Producto | Tabla 30 / Tabla 31 | Diagrama de Clases Fig 17
  * UseCase independiente del framework para crear o editar un producto.
- * Implementa el patrón Observer (Subject): los componentes React se suscriben a eventos
- * ('productoActualizado', 'pasoAvanzado', etc.) y reaccionan sin acoplamiento directo.
+ *
+ * Patrón Observer — implementado con la librería eventemitter3:
+ *   Antes: se implementaba manualmente con un Map de listeners y métodos
+ *          suscribir/notificar/desuscribir escritos a mano.
+ *   Ahora: CrearProductoUseCase extiende EventEmitter (eventemitter3), que provee
+ *          on/emit/off con manejo de memoria, errores y edge-cases ya resueltos
+ *          por la librería. El comportamiento observable es idéntico; lo que
+ *          cambia es que la mecánica del patrón la garantiza el framework, no
+ *          código propio que habría que mantener y testear.
+ *
  * Maneja el flujo multi-paso: datosPrincipales → categoria → mascota → precio → confirmacion.
  */
-export class CrearProductoUseCase {
+export class CrearProductoUseCase extends EventEmitter {
     constructor(productosService, catalogosService, validadorService) {
+        // Inicializa EventEmitter (eventemitter3) — reemplaza el this.listeners = new Map()
+        // que se usaba antes para registrar y despachar callbacks manualmente.
+        super();
+
         this.productosService = productosService;
         this.catalogosService = catalogosService;
         this.validadorService = validadorService;
-        
+
         this.producto = new Producto();
         this.pasoActual = 0;
         this.pasos = [
@@ -22,8 +35,6 @@ export class CrearProductoUseCase {
             'precio',
             'confirmacion'
         ];
-        
-        this.listeners = new Map(); // Para notificaciones de cambios
     }
 
     /**
@@ -47,16 +58,18 @@ export class CrearProductoUseCase {
      */
     async avanzarPaso(datosValidar = {}) {
         const validacion = await this.validarPasoActual(datosValidar);
-        
+
         if (!validacion.valido) {
             throw new Error(validacion.errores.join(', '));
         }
 
         this.actualizarProducto(datosValidar);
-        
+
         if (this.pasoActual < this.pasos.length - 1) {
             this.pasoActual++;
-            this.notificar('pasoAvanzado', this.pasoActual);
+            // emit() de eventemitter3 reemplaza el método notificar() manual.
+            // Antes: this.notificar('pasoAvanzado', this.pasoActual)
+            this.emit('pasoAvanzado', this.pasoActual);
         }
 
         return this.pasoActual;
@@ -68,7 +81,7 @@ export class CrearProductoUseCase {
     retrocederPaso() {
         if (this.pasoActual > 0) {
             this.pasoActual--;
-            this.notificar('pasoRetrocedido', this.pasoActual);
+            this.emit('pasoRetrocedido', this.pasoActual);
         }
         return this.pasoActual;
     }
@@ -98,7 +111,7 @@ export class CrearProductoUseCase {
      */
     actualizarProducto(datos) {
         this.producto.setProducto(datos);
-        this.notificar('productoActualizado', this.producto.obtenerEntidad());
+        this.emit('productoActualizado', this.producto.obtenerEntidad());
     }
 
     /**
@@ -149,13 +162,13 @@ export class CrearProductoUseCase {
      */
     async guardar() {
         const validacion = await this.validarProductoCompleto();
-        
+
         if (!validacion.valido) {
             throw new Error('Producto incompleto: ' + validacion.errores.join(', '));
         }
 
         const resultado = await this.productosService.guardar(this.producto);
-        this.notificar('productoGuardado', resultado);
+        this.emit('productoGuardado', resultado);
         return resultado;
     }
 
@@ -187,7 +200,7 @@ export class CrearProductoUseCase {
      */
     cargarProducto(datos) {
         this.producto = Producto.from(datos);
-        this.notificar('productoActualizado', this.producto.obtenerEntidad());
+        this.emit('productoActualizado', this.producto.obtenerEntidad());
     }
 
     /**
@@ -196,26 +209,7 @@ export class CrearProductoUseCase {
     reiniciar() {
         this.producto = new Producto();
         this.pasoActual = 0;
-        this.notificar('flujoReiniciado', null);
-    }
-
-    /**
-     * Suscribe a eventos del useCase (patrón Observer)
-     */
-    suscribir(evento, callback) {
-        if (!this.listeners.has(evento)) {
-            this.listeners.set(evento, []);
-        }
-        this.listeners.get(evento).push(callback);
-    }
-
-    /**
-     * Notifica a los suscriptores de un evento
-     */
-    notificar(evento, datos) {
-        if (this.listeners.has(evento)) {
-            this.listeners.get(evento).forEach(callback => callback(datos));
-        }
+        this.emit('flujoReiniciado', null);
     }
 
     /**
@@ -224,19 +218,6 @@ export class CrearProductoUseCase {
     setPasoActual(n) {
         if (n >= 0 && n < this.pasos.length) {
             this.pasoActual = n;
-        }
-    }
-
-    /**
-     * Desuscribe de eventos
-     */
-    desuscribir(evento, callback) {
-        if (this.listeners.has(evento)) {
-            const callbacks = this.listeners.get(evento);
-            const index = callbacks.indexOf(callback);
-            if (index > -1) {
-                callbacks.splice(index, 1);
-            }
         }
     }
 }
